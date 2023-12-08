@@ -26,10 +26,14 @@ namespace glcore
 			return;
 		}
 
+
 		while (!glfwWindowShouldClose(m_window))
 		{
-			glfwPollEvents();
+			glClear(GL_COLOR_BUFFER_BIT);
+
 			glfwSwapBuffers(m_window);
+
+			glfwPollEvents();
 		}
 
 	}
