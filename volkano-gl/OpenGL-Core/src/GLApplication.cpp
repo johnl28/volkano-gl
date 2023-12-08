@@ -1,9 +1,9 @@
 #include "GLApplication.h"
-
+#include "Log.h"
 
 namespace glcore
 {
-	GLApplication::GLApplication(int width, int height, std::string title)
+	GLApplication::GLApplication(int width, int height, const std::string& title)
 	{
 		m_width = width;
 		m_height = height;
@@ -18,11 +18,30 @@ namespace glcore
 		glfwTerminate();
 	}
 
+	void GLApplication::Run()
+	{
+		if (!m_initialised)
+		{
+			GLCORE_ERR("Application loop cannot run if initialisation failed.");
+			return;
+		}
+
+		while (!glfwWindowShouldClose(m_window))
+		{
+			glfwPollEvents();
+			glfwSwapBuffers(m_window);
+		}
+
+	}
+
 	void GLApplication::InitGLFW()
 	{
-		printf("Init GLFW");
+		if (glfwInit() != GLFW_TRUE)
+		{
+			GLCORE_ERR("Failed to initialise GLFW.");
+			return;
+		}
 
-		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -32,7 +51,7 @@ namespace glcore
 
 		if(m_window == nullptr)
 		{
-			printf("Failed to init GLFW window");
+			GLCORE_ERR("Failed to create window");
 			glfwTerminate();
 			return;
 		}
@@ -41,18 +60,14 @@ namespace glcore
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
-			printf("Failed to initialize GLAD");
+			GLCORE_ERR("Failed to initialize GLAD");
 			return;
 		}
 
 		glViewport(0, 0, m_width, m_height);
 
-		while (!glfwWindowShouldClose(m_window))
-		{
-			glfwSwapBuffers(m_window);
-			glfwPollEvents();
-		}
+		m_initialised = true;
 
-
+		GLCORE_INFO("GLFW Initialised");
 	}
 }

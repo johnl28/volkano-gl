@@ -11,16 +11,22 @@ namespace glcore
 	class GLApplication
 	{
 	public:
-		GLApplication(int width, int height, std::string title);
+		GLApplication(int width, int height, const std::string& title);
 		~GLApplication();
 
 		GLApplication(const GLApplication&) = delete;
 		GLApplication& operator=(const GLApplication&) = delete;
 
+		void Run();
+
+		bool IsInitialised() { return m_initialised; }
+
 	private:
 		void InitGLFW();
 
 	private:
+
+		bool m_initialised = false;
 		int m_width = 0;
 		int m_height = 0;
 

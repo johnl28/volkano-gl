@@ -165,8 +165,10 @@
   <ItemGroup>
     <ClCompile Include="..\dependencies\c\glad.c" />
     <ClCompile Include="src\GLApplication.cpp" />
+    <ClCompile Include="src\Log.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\GLApplication.h" />
     <ClInclude Include="GLCore.h" />
   </ItemGroup>
