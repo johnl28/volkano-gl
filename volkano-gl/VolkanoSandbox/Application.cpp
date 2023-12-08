@@ -1,11 +1,11 @@
 
 #include <cstdlib>
 
-#include "OpenGL-Core.h"
+#include "GLCore.h"
 
 int main()
 {
-	GLCore::print("HELLO!");
+	glcore::GLApplication app(200, 200, "Hello OpenGL");
 
 
 	return EXIT_SUCCESS;
