@@ -26,10 +26,10 @@ namespace glcore
 
 	private:
 
-		bool m_initialised = false;
 		int m_width = 0;
 		int m_height = 0;
 
+		bool m_initialised = false;
 		std::string m_title = "";
 
 		GLFWwindow* m_window = nullptr;
