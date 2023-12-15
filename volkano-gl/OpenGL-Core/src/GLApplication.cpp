@@ -1,6 +1,8 @@
 #include "GLApplication.h"
 #include "Log.h"
 
+#include "VertexBuffer.h"
+
 #include "Shader.h"
 #include "ShaderProgram.h"
 
@@ -47,9 +49,7 @@ namespace glcore
 		glGenVertexArrays(1, &VAO);
 		glBindVertexArray(VAO);
 
-		glGenBuffers(1, &buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+		VertexBuffer vb(positions, sizeof(positions));
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
@@ -66,11 +66,26 @@ namespace glcore
 		program.LinkProgram();
 		program.Bind();
 
-		program.SetUniform4f("u_FragColor", 0.3f, 0.0f, 0.0f, 1.0f);
+
+		float r = 0.0f;
+		float incr = -0.01f;
+
 
 		while (!glfwWindowShouldClose(m_window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			program.SetUniform4f("u_FragColor", r, 0.0f, 0.0f, 1.0f);
+
+			if (r > 1.0f)
+			{
+				incr = -0.01f;
+			}
+			else if(r < 0.0f)
+			{
+				incr = 0.01f;
+			}
+			r += incr;
 
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 
