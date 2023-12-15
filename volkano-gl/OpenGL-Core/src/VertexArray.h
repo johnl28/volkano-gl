@@ -19,14 +19,13 @@ struct VertexAttribute
 		case GL_FLOAT:
 			return sizeof(GLfloat);
 
-		case GL_INT_VEC2:
+		case GL_FLOAT_VEC2:
 			return sizeof(glm::vec2);
 
-		case GL_INT_VEC3:
+		case GL_FLOAT_VEC3:
 			return sizeof(glm::vec3);
 
-
-		case GL_INT_VEC4:
+		case GL_FLOAT_VEC4:
 			return sizeof(glm::vec4);
 
 		default:

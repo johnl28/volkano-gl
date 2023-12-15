@@ -3,6 +3,7 @@
 
 #include "VertexBuffer.h"
 #include "VertexArray.h"
+#include "Texture.h"
 
 #include "Shader.h"
 #include "ShaderProgram.h"
@@ -34,20 +35,27 @@ namespace glcore
 	{
 		if (!m_initialised)
 		{
-			GLCORE_ERR("Application loop cannot run if initialisation failed.");
+			GLCORE_ERR("[GLApplication] Application loop cannot run if initialisation failed.");
 			return;
 		}
 
-		float positions[6] = {
-			-0.5f, -0.5f,
-			0.0f, 0.5f,
-			0.5f, -0.5f
+		glm::vec2 positions[] = {
+			glm::vec2 { -0.5f, -0.5f },
+			glm::vec2 { 0.0f, 0.0f },
+
+			glm::vec2 { 0.0f, 0.5f },
+			glm::vec2 { 1.0f, 0.0f },
+
+			glm::vec2 { 0.5f, -0.5f },
+			glm::vec2 { 0.0f, 1.0f }
+
 		};
 
 		VertexArray va;
 		VertexBuffer vb(positions, sizeof(positions));
 
-		va.AddAttribute<float>(2);
+		va.AddAttribute<GLfloat>(2);
+		va.AddAttribute<GLfloat>(2);
 		va.CreateAttribPointers();
 
 
@@ -62,27 +70,15 @@ namespace glcore
 		program.AttachShader(&fs);
 		program.LinkProgram();
 		program.Bind();
+		program.SetUniform1i("u_Texture", 0);
 
-
-		float r = 0.0f;
-		float incr = -0.01f;
+		Texture texture("assets/textures/brick_wall2.jpg");
+		texture.Bind(0);
 
 
 		while (!glfwWindowShouldClose(m_window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
-
-			program.SetUniform4f("u_FragColor", r, 0.0f, 0.0f, 1.0f);
-
-			if (r > 1.0f)
-			{
-				incr = -0.01f;
-			}
-			else if(r < 0.0f)
-			{
-				incr = 0.01f;
-			}
-			r += incr;
 
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -97,7 +93,7 @@ namespace glcore
 	{
 		if (glfwInit() != GLFW_TRUE)
 		{
-			GLCORE_ERR("Failed to initialise GLFW.");
+			GLCORE_ERR("[GLApplication] Failed to initialise GLFW.");
 			return;
 		}
 
@@ -111,7 +107,7 @@ namespace glcore
 		m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), NULL, NULL);
 		if(m_window == nullptr)
 		{
-			GLCORE_ERR("Failed to create window");
+			GLCORE_ERR("[GLApplication] Failed to create window");
 			glfwTerminate();
 			return;
 		}
@@ -120,7 +116,7 @@ namespace glcore
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
-			GLCORE_ERR("Failed to initialize GLAD");
+			GLCORE_ERR("[GLApplication] Failed to initialize GLAD");
 			return;
 		}
 
@@ -128,7 +124,7 @@ namespace glcore
 
 		m_initialised = true;
 
-		GLCORE_INFO("GLFW Initialised");
+		GLCORE_INFO("[GLApplication] GLFW Initialised");
 
 		auto version = glGetString(GL_VERSION);
 		GLCORE_INFO((char*)version);

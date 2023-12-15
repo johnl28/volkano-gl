@@ -43,6 +43,8 @@ void VertexArray::AddAttribute<GLfloat>(GLint count)
 	m_stride += sizeof(GLfloat) * count;
 }
 
+
+// todo: Fix issue with vec2, 3, 4 struct
 template<>
 void VertexArray::AddAttribute<glm::vec2>(GLint count)
 {
