@@ -1,9 +1,24 @@
+#include "glm/gtc/type_ptr.hpp"
+
 #include "ShaderProgram.h"
 #include "Log.h"
 
 ShaderProgram::ShaderProgram()
 {
 	m_programId = glCreateProgram();
+}
+
+void ShaderProgram::LoadShaders(const std::string& verShaderFilePath, const std::string& fragShaderFilePath)
+{
+	Shader vertexShader(verShaderFilePath, GL_VERTEX_SHADER);
+	vertexShader.Compile();
+
+	Shader fragmentShader(fragShaderFilePath, GL_FRAGMENT_SHADER);
+	fragmentShader.Compile();
+
+	AttachShader(&vertexShader);
+	AttachShader(&fragmentShader);
+	LinkProgram();
 }
 
 void ShaderProgram::AttachShader(Shader* shader)
@@ -65,6 +80,11 @@ void ShaderProgram::SetUniform4f(const std::string& uniform, GLfloat v0, GLfloat
 void ShaderProgram::SetUniform3f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2)
 {
 	glUniform3f(GetUniformLocation(uniform), v0, v1, v2);
+}
+
+void ShaderProgram::SetUniformMatrix4fv(const std::string& uniform, glm::mat4 matrix)
+{
+	glUniformMatrix4fv(GetUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 GLuint ShaderProgram::GetUniformLocation(const std::string& uniform)
