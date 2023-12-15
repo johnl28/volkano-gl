@@ -18,6 +18,7 @@ namespace glcore
 		GLApplication& operator=(const GLApplication&) = delete;
 
 		void Run();
+		void SetSrollCallback(GLFWscrollfun func);
 
 		bool IsInitialised() { return m_initialised; }
 
