@@ -1,9 +1,13 @@
 #include "Texture.h"
 #include "Log.h"
 
-Texture::Texture(const std::string& texturePath)
+Texture::Texture(const std::string& texturePath, bool flip)
 {
-	stbi_set_flip_vertically_on_load(1);
+	if (flip) 
+	{
+		stbi_set_flip_vertically_on_load(1);
+	}
+
 	auto textureBuffer = stbi_load(texturePath.c_str(), &m_width, &m_height, &m_BPP, 4);
 	if (!textureBuffer)
 	{

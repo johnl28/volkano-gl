@@ -8,7 +8,7 @@
 class Texture
 {
 public:
-	Texture(const std::string& texturePath);
+	Texture(const std::string& texturePath, bool flip = false);
 	~Texture();
 
 	void Bind(GLuint sampler = 0) const;
