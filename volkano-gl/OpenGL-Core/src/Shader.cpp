@@ -12,6 +12,8 @@ Shader::Shader(const std::string& filePath, GLenum shaderType)
 	m_shaderType = shaderType;
 	m_shaderFilePath = filePath;
 
+	m_shaderId = glCreateShader(m_shaderType);
+
 	ReadShaderFile();
 }
 
@@ -48,8 +50,6 @@ void Shader::Compile()
 
 	const char* source = m_shaderCode.c_str();
 
-	m_shaderId = glCreateShader(m_shaderType);
-
 	glShaderSource(m_shaderId, 1, &source, NULL);
 	glCompileShader(m_shaderId);
 
@@ -65,7 +65,7 @@ void Shader::Compile()
 		return;
 	}
 
-	GLCORE_INFO("[Shader] %s compiled", m_shaderFilePath.c_str());
+	GLCORE_INFO("[Shader] shader %s compiled", m_shaderFilePath.c_str());
 	m_compiled = true;
 }
 
