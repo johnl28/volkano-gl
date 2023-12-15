@@ -1,6 +1,9 @@
 #include "GLApplication.h"
 #include "Log.h"
 
+#include "Shader.h"
+#include "ShaderProgram.h"
+
 namespace glcore
 {
 	void GlErrorCallback(int error_code, const char* description)
@@ -39,13 +42,31 @@ namespace glcore
 		};
 
 		GLuint buffer;
+		GLuint VAO;
+
+		glGenVertexArrays(1, &VAO);
+		glBindVertexArray(VAO);
 
 		glGenBuffers(1, &buffer);
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 		glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-		glEnableVertexAttribArray(0);
 
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+		Shader vs("assets/shaders/default_vert.glsl", GL_VERTEX_SHADER);
+		vs.Compile();
+
+		Shader fs("assets/shaders/default_frag.glsl", GL_FRAGMENT_SHADER);
+		fs.Compile();
+
+		ShaderProgram program;
+		program.AttachShader(&vs);
+		program.AttachShader(&fs);
+		program.LinkProgram();
+		program.Bind();
+
+		program.SetUniform4f("u_FragColor", 0.3f, 0.0f, 0.0f, 1.0f);
 
 		while (!glfwWindowShouldClose(m_window))
 		{
