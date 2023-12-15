@@ -2,6 +2,7 @@
 #include "Log.h"
 
 #include "VertexBuffer.h"
+#include "VertexArray.h"
 
 #include "Shader.h"
 #include "ShaderProgram.h"
@@ -43,16 +44,12 @@ namespace glcore
 			0.5f, -0.5f
 		};
 
-		GLuint buffer;
-		GLuint VAO;
-
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
-
+		VertexArray va;
 		VertexBuffer vb(positions, sizeof(positions));
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+		va.AddAttribute<float>(2);
+		va.CreateAttribPointers();
+
 
 		Shader vs("assets/shaders/default_vert.glsl", GL_VERTEX_SHADER);
 		vs.Compile();

@@ -169,6 +169,7 @@
     <ClCompile Include="src\GLApplication.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
+    <ClCompile Include="src\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ShaderProgram.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="src\GLApplication.h" />
     <ClInclude Include="GLCore.h" />
     <ClInclude Include="src\VertexBuffer.h" />
+    <ClInclude Include="src\VertexArray.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
