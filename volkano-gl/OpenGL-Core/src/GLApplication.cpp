@@ -1,8 +1,11 @@
+
+#include "glm/gtc/matrix_transform.hpp"
 #include "GLApplication.h"
 #include "Log.h"
 
 #include "VertexBuffer.h"
 #include "VertexArray.h"
+#include "IndexBuffer.h"
 #include "Texture.h"
 
 #include "Shader.h"
@@ -40,47 +43,54 @@ namespace glcore
 		}
 
 		glm::vec2 positions[] = {
-			glm::vec2 { -0.5f, -0.5f },
-			glm::vec2 { 0.0f, 0.0f },
+			glm::vec2 { -0.5f, -0.5f }, // pos
+			glm::vec2 { 0.0f, 1.0f }, // tex
 
-			glm::vec2 { 0.0f, 0.5f },
-			glm::vec2 { 1.0f, 0.0f },
+			glm::vec2 { 0.5f, -0.5f }, // pos
+			glm::vec2 { 1.0f, 1.0f }, // tex
 
-			glm::vec2 { 0.5f, -0.5f },
-			glm::vec2 { 0.0f, 1.0f }
+			glm::vec2 { -0.5f, 0.5f }, // pos
+			glm::vec2 { 0.0f, 0.0f }, // tex
 
+			glm::vec2 { 0.5f, 0.5f }, // pos
+			glm::vec2 { 1.0f, 0.0f }  // tex
+
+		};
+
+		GLuint indicies[] = {
+			0, 1, 2,
+			1, 3, 2
 		};
 
 		VertexArray va;
 		VertexBuffer vb(positions, sizeof(positions));
+		IndexBuffer ib(indicies, 6);
+
 
 		va.AddAttribute<GLfloat>(2);
 		va.AddAttribute<GLfloat>(2);
 		va.CreateAttribPointers();
 
-
-		Shader vs("assets/shaders/default_vert.glsl", GL_VERTEX_SHADER);
-		vs.Compile();
-
-		Shader fs("assets/shaders/default_frag.glsl", GL_FRAGMENT_SHADER);
-		fs.Compile();
-
 		ShaderProgram program;
-		program.AttachShader(&vs);
-		program.AttachShader(&fs);
-		program.LinkProgram();
+		program.LoadShaders("assets/shaders/default_vert.glsl", "assets/shaders/default_frag.glsl");
 		program.Bind();
-		program.SetUniform1i("u_Texture", 0);
 
 		Texture texture("assets/textures/brick_wall2.jpg");
 		texture.Bind(0);
 
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::scale(trans, glm::vec3(2.0, 2.0, 2.0));
+		program.SetUniformMatrix4fv("u_Transform", trans);
 
+		
+		float r = 0.0f;
 		while (!glfwWindowShouldClose(m_window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+			//
+			//r += 0.01f;
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 			glfwSwapBuffers(m_window);
 
@@ -88,6 +98,7 @@ namespace glcore
 		}
 
 	}
+
 
 	void GLApplication::InitGLFW()
 	{
@@ -129,5 +140,10 @@ namespace glcore
 		auto version = glGetString(GL_VERSION);
 		GLCORE_INFO((char*)version);
 
+	}
+
+	void GLApplication::SetSrollCallback(GLFWscrollfun func)
+	{
+		glfwSetScrollCallback(m_window, func);
 	}
 }
