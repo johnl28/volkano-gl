@@ -6,34 +6,38 @@
 
 #include "Shader.h"
 
-class ShaderProgram
-{
-public:
-	ShaderProgram();
 
-	void LoadShaders(const std::string& vertexShader, const std::string& fragmentShader);
+namespace glcore {
 
-	void AttachShader(Shader* shader);
-	void LinkProgram();
+	class ShaderProgram
+	{
+	public:
+		ShaderProgram();
 
-	void Bind() const;
-	void Unbind() const;
+		void LoadShaders(const std::string& vertexShader, const std::string& fragmentShader);
 
-	void SetUniform1i(const std::string& uniform, GLint v0);
-	void SetUniform4f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
-	void SetUniform3f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2);
-	void SetUniformMatrix4fv(const std::string& uniform, glm::mat4 matrix);
+		void AttachShader(Shader* shader);
+		void LinkProgram();
 
-	GLuint GetID() const { return m_programId; }
+		void Bind() const;
+		void Unbind() const;
 
-private:
-	GLuint GetUniformLocation(const std::string& uniform);
+		void SetUniform1i(const std::string& uniform, GLint v0);
+		void SetUniform4f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+		void SetUniform3f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2);
+		void SetUniformMatrix4fv(const std::string& uniform, glm::mat4 matrix);
 
-private:
-	std::unordered_map<std::string, GLint> m_unifromLocation;
+		GLuint GetID() const { return m_programId; }
 
-	GLuint m_programId = 0;
+	private:
+		GLuint GetUniformLocation(const std::string& uniform);
 
-	bool m_linked = false;
-};
+	private:
+		std::unordered_map<std::string, GLint> m_unifromLocation;
 
+		GLuint m_programId = 0;
+
+		bool m_linked = false;
+	};
+
+}

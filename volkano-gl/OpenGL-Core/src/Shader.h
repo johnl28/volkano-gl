@@ -4,6 +4,8 @@
 
 #include "glad/glad.h"
 
+namespace glcore {
+
 
 class Shader
 {
@@ -31,6 +33,7 @@ private:
 	std::string m_shaderCode = "";
 
 	bool m_compiled = false;
-
 };
 
+
+}

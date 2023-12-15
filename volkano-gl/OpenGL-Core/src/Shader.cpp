@@ -6,6 +6,8 @@
 #include "Shader.h"
 
 
+namespace glcore {
+
 
 Shader::Shader(const std::string& filePath, GLenum shaderType)
 {
@@ -70,3 +72,4 @@ void Shader::Compile()
 }
 
 
+}

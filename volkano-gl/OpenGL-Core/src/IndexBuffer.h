@@ -1,19 +1,22 @@
 #pragma once
 #include "glad/glad.h"
 
-class IndexBuffer
-{
-public:
-	IndexBuffer(const GLuint* data, GLuint count);
-	~IndexBuffer();
+namespace glcore {
 
-	void Bind() const;
-	void UnBind() const;
+	class IndexBuffer
+	{
+	public:
+		IndexBuffer(const GLuint* data, GLuint count);
+		~IndexBuffer();
 
-	GLuint GetCount() const { return m_count; }
+		void Bind() const;
+		void UnBind() const;
 
-private:
-	GLuint m_bufferID = 0;
-	GLuint m_count = 0;
-};
+		GLuint GetCount() const { return m_count; }
 
+	private:
+		GLuint m_bufferID = 0;
+		GLuint m_count = 0;
+	};
+
+}

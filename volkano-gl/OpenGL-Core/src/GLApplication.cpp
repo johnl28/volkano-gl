@@ -1,5 +1,6 @@
 
 #include "glm/gtc/matrix_transform.hpp"
+
 #include "GLApplication.h"
 #include "Log.h"
 
@@ -11,8 +12,9 @@
 #include "Shader.h"
 #include "ShaderProgram.h"
 
-namespace glcore
-{
+namespace glcore {
+
+
 	void GlErrorCallback(int error_code, const char* description)
 	{
 		GLCORE_ERR("[OpenGL]: Error code %d. %s", error_code, description);
@@ -42,20 +44,30 @@ namespace glcore
 			return;
 		}
 
-		glm::vec2 positions[] = {
-			glm::vec2 { -0.5f, -0.5f }, // pos
-			glm::vec2 { 0.0f, 1.0f }, // tex
+		Vertex vertices[] = {
 
-			glm::vec2 { 0.5f, -0.5f }, // pos
-			glm::vec2 { 1.0f, 1.0f }, // tex
+			{
+				glm::vec3 { -0.5f, -0.5f, 1.0f },
+				glm::vec2 { 0.0f, 1.0f },
+			},
 
-			glm::vec2 { -0.5f, 0.5f }, // pos
-			glm::vec2 { 0.0f, 0.0f }, // tex
+			{
+				glm::vec3 { 0.5f, -0.5f, 1.0f },
+				glm::vec2 { 1.0f, 1.0f },
+			},
 
-			glm::vec2 { 0.5f, 0.5f }, // pos
-			glm::vec2 { 1.0f, 0.0f }  // tex
+			{
+				glm::vec3 { -0.5f, 0.5f, 1.0f },
+				glm::vec2 { 0.0f, 0.0f },
+			},
 
+			{
+				glm::vec3 { 0.5f, 0.5f, 1.0f },
+				glm::vec2 { 1.0f, 0.0f }
+			}
 		};
+
+
 
 		GLuint indicies[] = {
 			0, 1, 2,
@@ -63,12 +75,12 @@ namespace glcore
 		};
 
 		VertexArray va;
-		VertexBuffer vb(positions, sizeof(positions));
-		IndexBuffer ib(indicies, 6);
+		VertexBuffer vb(vertices, sizeof(vertices));
+		IndexBuffer ib(indicies, sizeof(indicies) / sizeof(GLuint));
 
-
+		va.AddAttribute<GLfloat>(3);
 		va.AddAttribute<GLfloat>(2);
-		va.AddAttribute<GLfloat>(2);
+		va.AddAttribute<GLfloat>(3);
 		va.CreateAttribPointers();
 
 		ShaderProgram program;
@@ -79,18 +91,17 @@ namespace glcore
 		texture.Bind(0);
 
 		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::scale(trans, glm::vec3(2.0, 2.0, 2.0));
+		trans = glm::translate(trans, glm::vec3(0.3, 0.2, 0.0f));
+		trans = glm::rotate(trans, 90.0f, glm::vec3(0.0, 0.0, 1.0));
 		program.SetUniformMatrix4fv("u_Transform", trans);
 
 		
-		float r = 0.0f;
 		while (!glfwWindowShouldClose(m_window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			//
-			//r += 0.01f;
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+			glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			glfwSwapBuffers(m_window);
 

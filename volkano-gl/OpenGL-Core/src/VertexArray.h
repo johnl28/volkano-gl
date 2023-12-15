@@ -4,71 +4,73 @@
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 
+namespace glcore {
 
-struct VertexAttribute
-{
-	GLenum type;
-	GLboolean normalized;
-	GLint count;
-
-
-	static size_t GetAttrSize(GLenum type)
+	struct VertexAttribute
 	{
-		switch (type)
+		GLenum type;
+		GLboolean normalized;
+		GLint count;
+
+
+		static size_t GetAttrSize(GLenum type)
 		{
-		case GL_FLOAT:
-			return sizeof(GLfloat);
+			switch (type)
+			{
+			case GL_FLOAT:
+				return sizeof(GLfloat);
 
-		case GL_FLOAT_VEC2:
-			return sizeof(glm::vec2);
+			case GL_FLOAT_VEC2:
+				return sizeof(glm::vec2);
 
-		case GL_FLOAT_VEC3:
-			return sizeof(glm::vec3);
+			case GL_FLOAT_VEC3:
+				return sizeof(glm::vec3);
 
-		case GL_FLOAT_VEC4:
-			return sizeof(glm::vec4);
+			case GL_FLOAT_VEC4:
+				return sizeof(glm::vec4);
 
-		default:
-			assert(false);
+			default:
+				assert(false);
+			}
+
+			return 0;
 		}
-
-		return 0;
-	}
-};
+	};
 
 
-class VertexArray
-{
-public:
-	VertexArray();
-	~VertexArray();
+	class VertexArray
+	{
+	public:
+		VertexArray();
+		~VertexArray();
 
-	void Bind() const;
-	void UnBind() const;
+		void Bind() const;
+		void UnBind() const;
 
-	void CreateAttribPointers() const;
+		void CreateAttribPointers() const;
 
-	template<class T>
-	void AddAttribute(GLint count);
+		template<class T>
+		void AddAttribute(GLint count);
 
-	template<>
-	void AddAttribute<GLfloat>(GLint count);
+		template<>
+		void AddAttribute<GLfloat>(GLint count);
 
-	template<>
-	void AddAttribute<glm::vec2>(GLint count);
+		template<>
+		void AddAttribute<glm::vec2>(GLint count);
 
-	template<>
-	void AddAttribute<glm::vec3>(GLint count);
+		template<>
+		void AddAttribute<glm::vec3>(GLint count);
 
-	template<>
-	void AddAttribute<glm::vec4>(GLint count);
+		template<>
+		void AddAttribute<glm::vec4>(GLint count);
 
-private:
-	GLuint m_arrayID = 0;
+	private:
+		GLuint m_arrayID = 0;
 
-	size_t m_stride = 0;
+		size_t m_stride = 0;
 
-	std::vector<VertexAttribute> m_attributes;
+		std::vector<VertexAttribute> m_attributes;
 
-};
+	};
 
+}
