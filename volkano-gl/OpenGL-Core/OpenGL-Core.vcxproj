@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="..\dependencies\c\glad.c" />
     <ClCompile Include="..\dependencies\c\stb_image.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\IndexBuffer.h" />
