@@ -14,7 +14,7 @@ namespace glcore {
 	class Mesh
 	{
 	public:
-		Mesh();
+		Mesh(const void *vertexData, GLuint vertexCount, const GLuint *indexData, GLuint indexCount, );
 
 
 	private:

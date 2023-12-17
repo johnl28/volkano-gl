@@ -91,7 +91,7 @@ namespace glcore {
 		sp->SetUniformMatrix4fv("u_View", view);
 	}
 
-	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+	void SCROLL(GLFWwindow* window, double xoffset, double yoffset)
 	{
 		GLCORE_INFO("SCROLL");
 		GLCORE_ERR("AAAAAAAAAAAAAAAAAAAA");
@@ -149,9 +149,9 @@ namespace glcore {
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glViewport(0, 0, m_width, m_height);
 
-		glfwSetScrollCallback(m_window, MouseScroll);
 		glfwSetCursorPosCallback(m_window, MouseMove);
 		glfwSetKeyCallback(m_window, KeyCallback);
+		glfwSetScrollCallback(m_window, SCROLL);
 
 		m_initialised = true;
 
