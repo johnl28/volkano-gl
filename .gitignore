@@ -397,6 +397,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-/bin
-/bin_int
-/dependencies
+bin/
+bin_int/
+dependencies/
