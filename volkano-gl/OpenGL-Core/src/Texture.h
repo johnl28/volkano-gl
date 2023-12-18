@@ -12,6 +12,9 @@ namespace glcore {
 		Texture(const std::string& texturePath, bool flip = false);
 		~Texture();
 
+		Texture(const Texture&) = delete;
+		Texture& operator=(const Texture&) = delete;
+
 		void Bind(GLuint sampler = 0) const;
 		void UnBind() const;
 

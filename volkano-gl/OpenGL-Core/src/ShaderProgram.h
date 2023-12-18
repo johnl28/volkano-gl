@@ -13,6 +13,10 @@ namespace glcore {
 	{
 	public:
 		ShaderProgram();
+		~ShaderProgram();
+
+		ShaderProgram(const ShaderProgram&) = delete;
+		ShaderProgram& operator=(const ShaderProgram&) = delete;
 
 		void LoadShaders(const std::string& vertexShader, const std::string& fragmentShader);
 

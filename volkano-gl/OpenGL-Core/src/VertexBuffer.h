@@ -18,6 +18,10 @@ namespace glcore {
 		VertexBuffer(const void* data, size_t size, GLenum usage = GL_STATIC_DRAW);
 		~VertexBuffer();
 
+		VertexBuffer(const VertexBuffer&) = delete;
+		VertexBuffer& operator=(const VertexBuffer&) = delete;
+
+
 		void Bind() const;
 		void UnBind() const;
 

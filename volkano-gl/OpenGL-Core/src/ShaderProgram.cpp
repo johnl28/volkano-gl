@@ -10,6 +10,11 @@ namespace glcore {
 		m_programId = glCreateProgram();
 	}
 
+	ShaderProgram::~ShaderProgram()
+	{
+		glDeleteProgram(m_programId);
+	}
+
 	void ShaderProgram::LoadShaders(const std::string& verShaderFilePath, const std::string& fragShaderFilePath)
 	{
 		Shader vertexShader(verShaderFilePath, GL_VERTEX_SHADER);
