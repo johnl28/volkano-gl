@@ -14,12 +14,20 @@ namespace glcore {
 	class Mesh
 	{
 	public:
-		Mesh(const void *vertexData, GLuint vertexCount, const GLuint *indexData, GLuint indexCount, );
+		Mesh(const void *vertexData, size_t vertexDataSize, const GLuint *indexData, GLuint indexCount);
 
+		const glm::mat4& GetTransformMatrix();
+
+		GLuint GetIndexCount() const { return m_indexBuffer->GetCount(); }
+
+		void Bind() const;
+		void UnBind() const;
 
 	private:
-		glm::vec3 m_rotation;
-
+		glm::mat4 m_transformMatrix = glm::mat4(1.0f);
+		glm::vec3 m_position = glm::vec3(0.0f);
+		glm::vec3 m_rotation = glm::vec3(0.0f);
+		glm::vec3 m_scale = glm::vec3(1.0f);
 
 	private:
 		std::unique_ptr<VertexArray> m_vertexArray;

@@ -3,10 +3,7 @@
 
 #include "GLCore.h"
 
-void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
 
-}
 
 int main()
 {
@@ -18,7 +15,6 @@ int main()
 	}
 
 
-	app.SetSrollCallback(ScrollCallback);
 	app.Run();
 
 	return EXIT_SUCCESS;

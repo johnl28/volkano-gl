@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
 
+#include "Camera.h"
+
 
 namespace glcore
 {
@@ -18,12 +20,15 @@ namespace glcore
 		GLApplication& operator=(const GLApplication&) = delete;
 
 		void Run();
-		void SetSrollCallback(GLFWscrollfun func);
+		bool IsInitialised() const { return m_initialised; }
 
-		bool IsInitialised() { return m_initialised; }
+		void OnScroll(double xoffset, double yoffset);
+		void OnCursorMove(float xpos, float ypos);
 
 	private:
 		void InitGLFW();
+		void InitCamera();
+
 
 	private:
 
@@ -34,6 +39,8 @@ namespace glcore
 		std::string m_title = "";
 
 		GLFWwindow* m_window = nullptr;
+
+		std::unique_ptr<Camera> m_camera = nullptr;
 	};
 }
 
