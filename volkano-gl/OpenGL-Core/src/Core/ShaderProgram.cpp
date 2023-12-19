@@ -66,6 +66,12 @@ namespace glcore {
 
 	void ShaderProgram::Bind() const
 	{
+		if (!m_linked)
+		{
+			// Only raise an error
+			assert(false);
+		}
+
 		glUseProgram(m_programId);
 	}
 
