@@ -31,6 +31,7 @@ namespace glcore {
 		void SetUniform3f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2);
 		void SetUniformMatrix4fv(const std::string& uniform, glm::mat4 matrix);
 
+		bool IsLinked() const { return m_linked; }
 		GLuint GetID() const { return m_programId; }
 
 	private:
