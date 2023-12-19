@@ -26,7 +26,21 @@ namespace glcore {
 		m_transformMatrix = glm::translate(m_transformMatrix, m_position);
 		m_transformMatrix = glm::scale(m_transformMatrix, m_scale);
 
+		m_transformMatrix = glm::rotate(m_transformMatrix, m_rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		m_transformMatrix = glm::rotate(m_transformMatrix, m_rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		m_transformMatrix = glm::rotate(m_transformMatrix, m_rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+
 		return m_transformMatrix;
+	}
+
+	void Mesh::Move(glm::vec3 velocity)
+	{
+		m_position += velocity;
+	}
+
+	void Mesh::Rotate(glm::vec3 deg)
+	{
+		m_rotation += deg;
 	}
 
 	void Mesh::Bind() const

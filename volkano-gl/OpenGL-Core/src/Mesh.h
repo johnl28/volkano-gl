@@ -19,7 +19,10 @@ namespace glcore {
 		const glm::mat4& GetTransformMatrix();
 
 		GLuint GetIndexCount() const { return m_indexBuffer->GetCount(); }
+		GLuint GetID() const { return m_vertexArray->GetID(); }
 
+		void Move(glm::vec3 velocity);
+		void Rotate(glm::vec3 deg);
 		void Bind() const;
 		void UnBind() const;
 
@@ -30,10 +33,10 @@ namespace glcore {
 		glm::vec3 m_scale = glm::vec3(1.0f);
 
 	private:
-		std::unique_ptr<VertexArray> m_vertexArray;
-		std::unique_ptr<VertexBuffer> m_vertexBuffer;
-		std::unique_ptr<IndexBuffer> m_indexBuffer;
-		std::unique_ptr<Texture> m_texture;
+		std::unique_ptr<VertexArray> m_vertexArray = nullptr;
+		std::unique_ptr<VertexBuffer> m_vertexBuffer = nullptr;
+		std::unique_ptr<IndexBuffer> m_indexBuffer = nullptr;
+		std::unique_ptr<Texture> m_texture = nullptr;
 	};
 
 }
