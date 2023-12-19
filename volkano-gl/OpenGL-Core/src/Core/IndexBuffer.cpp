@@ -1,6 +1,7 @@
 #include "IndexBuffer.h"
 
 namespace glcore {
+
 	IndexBuffer::IndexBuffer(const GLuint* data, GLuint count) :
 		m_count(count)
 	{
@@ -12,6 +13,7 @@ namespace glcore {
 	IndexBuffer::~IndexBuffer()
 	{
 		glDeleteBuffers(1, &m_bufferID);
+
 	}
 
 	void IndexBuffer::Bind() const
