@@ -5,7 +5,7 @@
 
 namespace glcore {
 
-	Camera::Camera(glm::vec3 position, glm::vec3 rotation, Projection projection):
+	Camera::Camera(glm::vec3 position, Projection projection):
 		m_position(position), m_projection(projection)
 	{
 	}
@@ -40,13 +40,17 @@ namespace glcore {
 
 	void Camera::UpdateViewMatrix()
 	{
-		glm::vec3 cameraFront;
+		static glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 		cameraFront.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
 		cameraFront.y = sin(glm::radians(m_pitch));
 		cameraFront.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
 		cameraFront = glm::normalize(cameraFront);
 
-		m_viewMatrix = glm::lookAt(m_position, glm::vec3(0.7f, 0.0f, 0.0f),  glm::vec3(0.0f, 1.0f, 0.0f));
+		m_viewMatrix = glm::mat4(1.0f);
+		m_viewMatrix = glm::translate(m_viewMatrix, m_position);
+		//m_viewMatrix = glm::lookAt(m_position,  cameraFront, cameraUp);
 		m_isViewMatrixDirty = false;
 	}
 

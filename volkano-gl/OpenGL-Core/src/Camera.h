@@ -22,12 +22,9 @@ namespace glcore {
 	class Camera
 	{
 	public:
-		Camera(glm::vec3 position, glm::vec3 rotation, Projection projection);
+		Camera(glm::vec3 position, Projection projection);
 
-		float m_yaw = 0.0f;
-		float m_pitch = 0.0f;
-
-		void Move(glm::vec3 veolcity);
+		void Move(glm::vec3 velocity);
 		void Yaw(float offset);
 		void Pitch(float offset);
 
@@ -44,6 +41,8 @@ namespace glcore {
 
 	private:
 		glm::vec3 m_position;
+		float m_yaw = 0.0f;
+		float m_pitch = -90.0f;
 
 		Projection m_projection;
 
