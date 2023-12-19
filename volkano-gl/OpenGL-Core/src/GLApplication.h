@@ -10,6 +10,11 @@
 
 namespace glcore
 {
+	void GlScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+	void GlCursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+	void GlKeyInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+
 	class GLApplication
 	{
 	public:
@@ -23,15 +28,16 @@ namespace glcore
 		bool IsInitialised() const { return m_initialised; }
 
 		void OnScroll(double xoffset, double yoffset);
-		void OnCursorMove(float xpos, float ypos);
+		void OnCursorMove(double xpos, double ypos);
+		void OnKeyInput(int key, int scancode, int action, int mods);
 
 	private:
 		void InitGLFW();
 		void InitCamera();
+		void InitInputEvents();
 
 
 	private:
-
 		int m_width = 0;
 		int m_height = 0;
 
@@ -42,5 +48,6 @@ namespace glcore
 
 		std::unique_ptr<Camera> m_camera = nullptr;
 	};
+
 }
 

@@ -5,14 +5,8 @@
 #include "GLApplication.h"
 #include "Log.h"
 
-#include "VertexBuffer.h"
-#include "VertexArray.h"
-#include "IndexBuffer.h"
-#include "Texture.h"
-
-#include "Shader.h"
-#include "ShaderProgram.h"
-
+#include "Core/Texture.h"
+#include "Core/ShaderProgram.h"
 #include "Mesh.h"
 
 namespace glcore {
@@ -22,30 +16,6 @@ namespace glcore {
 		GLCORE_ERR("[OpenGL]: Error code %d. %s", error_code, description);
 	}
 
-	void GlScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-	{
-		auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
-		if (!glApp)
-		{
-			GLCORE_ERR("[GlScrollCallback] Window app pointer null.");
-			return;
-		}
-
-		glApp->OnScroll(xoffset, yoffset);
-	}
-
-	void GlCursorPosCallback(GLFWwindow* window, double xpos, double ypos)
-	{
-		auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
-		if (!glApp)
-		{
-			GLCORE_ERR("[GlCursorPosCallback] Window app pointer null.");
-			return;
-		}
-
-		glApp->OnCursorMove(xpos, ypos);
-	}
-
 	GLApplication::GLApplication(int width, int height, const std::string& title)
 	{
 		m_width = width;
@@ -53,6 +23,7 @@ namespace glcore {
 		m_title = title;
 
 		InitGLFW();
+		InitInputEvents();
 		InitCamera();
 	}
 
@@ -89,9 +60,6 @@ namespace glcore {
 		glfwMakeContextCurrent(m_window);
 		glfwSetWindowUserPointer(m_window, this);
 
-		glfwSetScrollCallback(m_window, GlScrollCallback);
-		glfwSetCursorPosCallback(m_window, GlCursorPosCallback);
-
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
@@ -100,17 +68,15 @@ namespace glcore {
 		}
 
 		glViewport(0, 0, m_width, m_height);
-
 		glEnable(GL_DEPTH_TEST);
 
-
-		m_initialised = true;
 
 		auto version = glGetString(GL_VERSION);
 		GLCORE_INFO("%s", (char*)version);
 
 		GLCORE_INFO("[GLApplication] GLFW Initialised");
 
+		m_initialised = true;
 	}
 
 	void GLApplication::InitCamera()
@@ -123,9 +89,16 @@ namespace glcore {
 			1000.0f
 		};
 
-		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, -120.0f), glm::vec3(0.0f), projection);
+		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, -120.0f), projection);
 
 		GLCORE_INFO("[GLApplication] Camera initiliased");
+	}
+
+	void GLApplication::InitInputEvents()
+	{
+		glfwSetKeyCallback(m_window, GlKeyInputCallback);
+		glfwSetScrollCallback(m_window, GlScrollCallback);
+		glfwSetCursorPosCallback(m_window, GlCursorPosCallback);
 	}
 
 	void GLApplication::OnScroll(double xoffset, double yoffset)
@@ -133,16 +106,23 @@ namespace glcore {
 		m_camera->Move(glm::vec3(0.0f, 0.0f, 5.0f * yoffset));
 	}
 
-	void GLApplication::OnCursorMove(float xpos, float ypos)
+	void GLApplication::OnCursorMove(double xpos, double ypos)
 	{
-		static float lasty = 0;
-
-		float yaw = lasty < ypos ? 10.1f : -10.1f;
-		m_camera->Yaw(yaw);
-
-		lasty = ypos;
+		m_camera->Pitch(10.0f);
 	}
 
+	void GLApplication::OnKeyInput(int key, int scancode, int action, int mods)
+	{
+		if (key == GLFW_KEY_W)
+		{
+			m_camera->Move(glm::vec3(0.0f, 0.0f, 5.0f));
+		}
+		else if (key == GLFW_KEY_S)
+		{
+			m_camera->Move(glm::vec3(0.0f, 0.0f, -5.0f));
+		}
+
+	}
 
 	void GLApplication::Run()
 	{
@@ -260,5 +240,41 @@ namespace glcore {
 
 	}
 
+
+	void GlScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	{
+		auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
+		if (!glApp)
+		{
+			GLCORE_ERR("[GlScrollCallback] Window app pointer null.");
+			return;
+		}
+
+		glApp->OnScroll(xoffset, yoffset);
+	}
+
+	void GlCursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+	{
+		auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
+		if (!glApp)
+		{
+			GLCORE_ERR("[GlCursorPosCallback] Window app pointer null.");
+			return;
+		}
+
+		glApp->OnCursorMove(xpos, ypos);
+	}
+
+	void GlKeyInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
+		if (!glApp)
+		{
+			GLCORE_ERR("[GlCursorPosCallback] Window app pointer null.");
+			return;
+		}
+
+		glApp->OnKeyInput(key, scancode, action, mods);
+	}
 
 }
