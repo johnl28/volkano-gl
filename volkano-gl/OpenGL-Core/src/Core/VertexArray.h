@@ -46,6 +46,7 @@ namespace glcore {
 		VertexArray(const VertexArray&) = delete;
 		VertexArray& operator=(const VertexArray&) = delete;
 
+		GLuint GetID() const { return m_arrayID; }
 		void Bind() const;
 		void UnBind() const;
 
