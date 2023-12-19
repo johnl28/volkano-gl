@@ -3,10 +3,10 @@
 
 #include "glm/glm.hpp"
 
-#include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "Texture.h"
+#include "Core/VertexArray.h"
+#include "Core/VertexBuffer.h"
+#include "Core/IndexBuffer.h"
+#include "Core/Texture.h"
 
  
 namespace glcore {
