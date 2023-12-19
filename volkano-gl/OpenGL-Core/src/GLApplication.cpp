@@ -2,12 +2,12 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/glm.hpp"
 
-#include "GLApplication.h"
 #include "Log.h"
+#include "GLApplication.h"
 
 #include "Core/Texture.h"
 #include "Core/ShaderProgram.h"
-#include "Mesh.h"
+
 
 namespace glcore {
 
@@ -25,6 +25,7 @@ namespace glcore {
 		InitGLFW();
 		InitInputEvents();
 		InitCamera();
+		InitDefaultShaderProgram();
 	}
 
 	GLApplication::~GLApplication()
@@ -76,11 +77,16 @@ namespace glcore {
 
 		GLCORE_INFO("[GLApplication] GLFW Initialised");
 
-		m_initialised = true;
+		m_ctxInitialised = true;
 	}
 
 	void GLApplication::InitCamera()
 	{
+		if (!m_ctxInitialised)
+		{
+			return;
+		}
+
 		Projection projection = {
 			ProjectionType::PERSPECTIVE_PROJECTION,
 			95.0f, 
@@ -96,9 +102,93 @@ namespace glcore {
 
 	void GLApplication::InitInputEvents()
 	{
+		if (!m_ctxInitialised)
+		{
+			return;
+		}
+
 		glfwSetKeyCallback(m_window, GlKeyInputCallback);
 		glfwSetScrollCallback(m_window, GlScrollCallback);
 		glfwSetCursorPosCallback(m_window, GlCursorPosCallback);
+	}
+
+	void GLApplication::InitDefaultShaderProgram()
+	{
+		if (!m_ctxInitialised)
+		{
+			return;
+		}
+
+		m_shaderProgram = std::make_unique<ShaderProgram>();
+		m_shaderProgram->LoadShaders("assets/shaders/default_vert.glsl", "assets/shaders/default_frag.glsl");
+		if (!m_shaderProgram->IsLinked())
+		{
+			return;
+		}
+
+		GLCORE_INFO("[GLApplication] Default shader program initialised");
+	}
+
+	void GLApplication::Run()
+	{
+		if (!m_ctxInitialised)
+		{
+			GLCORE_ERR("[GLApplication] Application loop cannot run if initialisation failed.");
+			return;
+		}
+
+		Texture texture("assets/textures/uv_grid_opengl.jpg");
+		texture.Bind(0);
+
+
+		while (!glfwWindowShouldClose(m_window))
+		{
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			m_shaderProgram->Bind();
+			if (m_camera->IsViewMatrixDirty())
+			{
+				m_shaderProgram->SetUniformMatrix4fv("u_View", m_camera->GetViewMatrix());
+			}
+
+			if (m_camera->IsProjectionMatrixDirty())
+			{
+				m_shaderProgram->SetUniformMatrix4fv("u_Projection", m_camera->GetProjectionMatrix());
+			}
+
+			RenderMeshes();
+
+			glfwSwapBuffers(m_window);
+
+			glfwPollEvents();
+		}
+
+	}
+
+	void GLApplication::RenderMeshes()
+	{
+		for (auto& it : m_meshVec)
+		{
+			RenderMesh(it.get());
+		}
+	}
+
+	void GLApplication::RenderMesh(Mesh* mesh)
+	{
+		if (!mesh)
+		{
+			return;
+		}
+
+		mesh->Bind();
+		m_shaderProgram->SetUniformMatrix4fv("u_Transform", mesh->GetTransformMatrix());
+
+		glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void GLApplication::AddMesh(Mesh* mesh)
+	{
+		m_meshVec.push_back(std::unique_ptr<Mesh>(mesh));
 	}
 
 	void GLApplication::OnScroll(double xoffset, double yoffset)
@@ -121,123 +211,6 @@ namespace glcore {
 		{
 			m_camera->Move(glm::vec3(0.0f, 0.0f, -5.0f));
 		}
-
-	}
-
-	void GLApplication::Run()
-	{
-		if (!m_initialised)
-		{
-			GLCORE_ERR("[GLApplication] Application loop cannot run if initialisation failed.");
-			return;
-		}
-
-		Vertex vertices[] = {
-
-			// front face
-			{
-				glm::vec3 { -1.0f, -1.0f, 1.0f },
-				glm::vec2 { 0.0f, 1.0f },
-			},
-
-			{
-				glm::vec3 { 1.0f, -1.0f, 1.0f },
-				glm::vec2 { 1.0f, 1.0f },
-			},
-
-			{
-				glm::vec3 { -1.0f, 1.0f, 1.0f },
-				glm::vec2 { 0.0f, 0.0f },
-			},
-
-			{
-				glm::vec3 { 1.0f, 1.0f, 1.0f },
-				glm::vec2 { 1.0f, 0.0f }
-			},
-
-
-			// back face
-			{
-				glm::vec3 { -1.0f, -1.0f, -1.0f },
-				glm::vec2 { 1.0f, 1.0f },
-			},
-
-			{
-				glm::vec3 { 1.0f, -1.0f, -1.0f },
-				glm::vec2 { 0.0f, 1.0f },
-
-			},
-
-			{
-				glm::vec3 { -1.0f, 1.0f, -1.0f },
-				glm::vec2 { 1.0f, 0.0f }
-			},
-
-			{
-				glm::vec3 { 1.0f, 1.0f, -1.0f },
-			
-				glm::vec2 { 0.0f, 0.0f },
-			},
-		};
-
-
-
-		GLuint indicies[] = {
-			// front
-			0, 1, 2,
-			1, 3, 2,
-
-			// back
-			4, 5, 6,
-			5, 7, 6,
-
-			// left
-			4, 0, 6,
-			0, 2, 6,
-
-			// right
-			5, 1, 7,
-			7, 3, 1,
-
-			// top
-			2, 3, 6,
-			
-		};
-
-		Mesh mesh(vertices, sizeof(vertices), indicies, sizeof(indicies) / sizeof(GLuint));
-		mesh.Bind();
-
-		auto shader = new ShaderProgram();
-		shader->LoadShaders("assets/shaders/default_vert.glsl", "assets/shaders/default_frag.glsl");
-		shader->Bind();
-
-		Texture texture("assets/textures/uv_grid_opengl.jpg");
-		texture.Bind(0);
-
-
-		while (!glfwWindowShouldClose(m_window))
-		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			shader->Bind();
-			if (m_camera->IsViewMatrixDirty())
-			{
-				shader->SetUniformMatrix4fv("u_View", m_camera->GetViewMatrix());
-			}
-
-			if (m_camera->IsProjectionMatrixDirty())
-			{
-				shader->SetUniformMatrix4fv("u_Projection", m_camera->GetProjectionMatrix());
-			}
-
-			shader->SetUniformMatrix4fv("u_Transform", mesh.GetTransformMatrix());
-			glDrawElements(GL_TRIANGLES, mesh.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
-
-			glfwSwapBuffers(m_window);
-
-			glfwPollEvents();
-		}
-
 	}
 
 

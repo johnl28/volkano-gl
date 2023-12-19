@@ -6,6 +6,8 @@
 #include "GLFW/glfw3.h"
 
 #include "Camera.h"
+#include "Mesh.h"
+#include "Core/ShaderProgram.h"
 
 
 namespace glcore
@@ -25,7 +27,8 @@ namespace glcore
 		GLApplication& operator=(const GLApplication&) = delete;
 
 		void Run();
-		bool IsInitialised() const { return m_initialised; }
+		bool IsContextInitialised() const { return m_ctxInitialised; }
+		void AddMesh(Mesh *mesh);
 
 		void OnScroll(double xoffset, double yoffset);
 		void OnCursorMove(double xpos, double ypos);
@@ -35,18 +38,27 @@ namespace glcore
 		void InitGLFW();
 		void InitCamera();
 		void InitInputEvents();
+		void InitDefaultShaderProgram();
 
+		void RenderMeshes();
+		void RenderMesh(Mesh* mesh);
 
 	private:
 		int m_width = 0;
 		int m_height = 0;
 
-		bool m_initialised = false;
+		bool m_ctxInitialised = false;
 		std::string m_title = "";
 
 		GLFWwindow* m_window = nullptr;
 
+		std::vector<std::unique_ptr<Mesh>> m_meshVec;
+
 		std::unique_ptr<Camera> m_camera = nullptr;
+
+		// Short-term 
+		// todo: Create a map to store multiple shaders used by different materials
+		std::unique_ptr<ShaderProgram> m_shaderProgram = nullptr;
 	};
 
 }
