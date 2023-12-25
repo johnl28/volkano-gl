@@ -24,10 +24,17 @@ namespace glcore {
 	public:
 		Camera(glm::vec3 position, Projection projection);
 
-		void Move(glm::vec3 velocity);
+		// Movement
+		void MoveX(float direction);
+		void MoveY(float direction);
+		void MoveZ(float direction);
+
+		// Rotation 
 		void Yaw(float offset);
 		void Pitch(float offset);
 
+
+		// Matrix
 		const glm::mat4 &GetViewMatrix();
 		const glm::mat4 &GetProjectionMatrix();
 
@@ -40,17 +47,21 @@ namespace glcore {
 		void UpdateProjectionMatrix();
 
 	private:
-		glm::vec3 m_position;
-		float m_yaw = 0.0f;
-		float m_pitch = -90.0f;
+		float m_Yaw = -90.0f;
+		float m_Pitch = 0.0f;
+		float m_CameraSpeed = 0.05f;
 
-		Projection m_projection;
+		glm::vec3 m_CameraUp;
+		glm::vec3 m_CameraFront;
+		glm::vec3 m_Position;
+
+		Projection m_Projection;
 
 		bool m_isViewMatrixDirty = true;
 		bool m_isProjectionMatrixDirty = true;
 
-		glm::mat4 m_viewMatrix = glm::mat4(1.0f);
-		glm::mat4 m_projectionMatrix = glm::mat4(1.0f);
+		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
+		glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);
 	};
 
 }

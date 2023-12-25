@@ -18,47 +18,54 @@ int main()
 
 		// front face
 		{
-			glm::vec3 { -1.0f, -1.0f, 1.0f },
+			glm::vec3 { -0.5f, -0.5f, 0.5f },
 			glm::vec2 { 0.0f, 1.0f },
+			glm::vec3 { 0.0f, 0.0f, 0.0f }
 		},
 
 		{
-			glm::vec3 { 1.0f, -1.0f, 1.0f },
+			glm::vec3 { 0.5f, -0.5f, 0.5f },
 			glm::vec2 { 1.0f, 1.0f },
+			glm::vec3 { 0.0f, 0.0f, 0.0f }
 		},
 
 		{
-			glm::vec3 { -1.0f, 1.0f, 1.0f },
+			glm::vec3 { -0.5f, 0.5f, 0.5f },
 			glm::vec2 { 0.0f, 0.0f },
+			glm::vec3 { 0.0f, 0.0f, 0.0f }
 		},
 
 		{
-			glm::vec3 { 1.0f, 1.0f, 1.0f },
-			glm::vec2 { 1.0f, 0.0f }
+			glm::vec3 { 0.5f, 0.5f, 0.5f },
+			glm::vec2 { 1.0f, 0.0f },
+			glm::vec3 { 0.0f, 0.0f, 0.0f }
 		},
 
 
 		// back face
 		{
-			glm::vec3 { -1.0f, -1.0f, -1.0f },
+			glm::vec3 { -0.5f, -0.5f, -0.5f },
 			glm::vec2 { 1.0f, 1.0f },
+			glm::vec3 { 0.0f, 0.0f, 0.0f }
 		},
 
 		{
-			glm::vec3 { 1.0f, -1.0f, -1.0f },
+			glm::vec3 { 0.5f, -0.5f, -0.5f },
 			glm::vec2 { 0.0f, 1.0f },
+			glm::vec3 { 0.0f, 0.0f, 0.0f }
 
 		},
 
 		{
-			glm::vec3 { -1.0f, 1.0f, -1.0f },
-			glm::vec2 { 1.0f, 0.0f }
+			glm::vec3 { -0.5f, 0.5f, -0.5f },
+			glm::vec2 { 1.0f, 0.0f },
+			glm::vec3 { 0.0f, 0.0f, 0.0f }
 		},
 
 		{
-			glm::vec3 { 1.0f, 1.0f, -1.0f },
-
+			glm::vec3 { 0.5f, 0.5f, -0.5f },
 			glm::vec2 { 0.0f, 0.0f },
+			glm::vec3 { 0.0f, 0.0f, 0.0f }
 		},
 	};
 
@@ -81,14 +88,13 @@ int main()
 		5, 1, 7,
 		7, 3, 1,
 
-		// top
-		2, 3, 6,
-
 	};
 
 	auto mesh = new glcore::Mesh(vertices, sizeof(vertices), indicies, sizeof(indicies) / sizeof(GLuint));
-	mesh->Rotate(glm::vec3(0.0f, 39.0f, 0.0f));
+	//mesh->Scale(glm::vec3(0.1f, 0.1f, 0.1f));
+	mesh->Move(glm::vec3(0.0f, 0.0f, -100.0f));
 	app.AddMesh(mesh);
+
 
 	app.Run();
 

@@ -61,7 +61,6 @@ namespace glcore {
 		glfwMakeContextCurrent(m_window);
 		glfwSetWindowUserPointer(m_window, this);
 
-
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			GLCORE_ERR("[GLApplication] Failed to initialize GLAD");
@@ -89,13 +88,15 @@ namespace glcore {
 
 		Projection projection = {
 			ProjectionType::PERSPECTIVE_PROJECTION,
-			95.0f, 
+
+			glm::radians(45.0f),
+
 			(float)m_width / (float)m_height, 
 			0.1f, 
-			1000.0f
+			200.0f
 		};
 
-		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, -120.0f), projection);
+		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), projection);
 
 		GLCORE_INFO("[GLApplication] Camera initiliased");
 	}
@@ -145,6 +146,7 @@ namespace glcore {
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
 			m_shaderProgram->Bind();
 			if (m_camera->IsViewMatrixDirty())
 			{
@@ -193,30 +195,77 @@ namespace glcore {
 
 	void GLApplication::OnScroll(double xoffset, double yoffset)
 	{
-		m_camera->Move(glm::vec3(0.0f, 0.0f, 5.0f * yoffset));
 	}
 
 	void GLApplication::OnCursorMove(double xpos, double ypos)
 	{
-		m_camera->Pitch(10.0f);
+		return;
+		static bool firstMouse = false;
+		static float lastX = 0, lastY = 0;
+
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos;
+		lastX = xpos;
+		lastY = ypos;
+
+		float sensitivity = 5.0f;
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+
+
+
+		//if (pitch > 89.0f)
+		//	pitch = 89.0f;
+		//if (pitch < -89.0f)
+		//	pitch = -89.0f;
+
+		//m_camera->Yaw(xoffset);
+		m_camera->Pitch(yoffset);
 	}
 
 	void GLApplication::OnKeyInput(int key, int scancode, int action, int mods)
 	{
-		if (key == GLFW_KEY_W)
+		switch (key)
 		{
-			m_camera->Move(glm::vec3(0.0f, 0.0f, 5.0f));
+			case GLFW_KEY_W:
+			{
+				m_camera->MoveZ(1.0f);
+				break;
+			}
+
+			case GLFW_KEY_S:
+			{
+				m_camera->MoveZ(-1.0f);
+				break;
+			}
+
+			case GLFW_KEY_A:
+			{
+				m_camera->MoveX(1.0f);
+				break;
+			}
+
+			case GLFW_KEY_D:
+			{
+				m_camera->MoveX(-1.0);
+				break;
+			}
 		}
-		else if (key == GLFW_KEY_S)
-		{
-			m_camera->Move(glm::vec3(0.0f, 0.0f, -5.0f));
-		}
+
 	}
 
 
 	void GlScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	{
-		auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
+		// Assign glApp only on the first call
+		static auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
 		if (!glApp)
 		{
 			GLCORE_ERR("[GlScrollCallback] Window app pointer null.");
@@ -228,7 +277,7 @@ namespace glcore {
 
 	void GlCursorPosCallback(GLFWwindow* window, double xpos, double ypos)
 	{
-		auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
+		static auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
 		if (!glApp)
 		{
 			GLCORE_ERR("[GlCursorPosCallback] Window app pointer null.");
@@ -240,7 +289,7 @@ namespace glcore {
 
 	void GlKeyInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
+		static auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
 		if (!glApp)
 		{
 			GLCORE_ERR("[GlCursorPosCallback] Window app pointer null.");

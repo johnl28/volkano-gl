@@ -23,12 +23,13 @@ namespace glcore {
 
 		void Move(glm::vec3 velocity);
 		void Rotate(glm::vec3 deg);
+		void Scale(glm::vec3 scale);
 		void Bind() const;
 		void UnBind() const;
 
 	private:
 		glm::mat4 m_transformMatrix = glm::mat4(1.0f);
-		glm::vec3 m_position = glm::vec3(0.0f);
+		glm::vec3 m_Position = glm::vec3(0.0f);
 		glm::vec3 m_rotation = glm::vec3(0.0f);
 		glm::vec3 m_scale = glm::vec3(1.0f);
 
