@@ -5,6 +5,7 @@
 #include "Log.h"
 #include "GLApplication.h"
 
+#include "Model.h"
 #include "Core/Texture.h"
 #include "Core/ShaderProgram.h"
 
@@ -43,7 +44,7 @@ namespace glcore {
 		}
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		glfwSetErrorCallback(GlErrorCallback);
@@ -89,14 +90,14 @@ namespace glcore {
 		Projection projection = {
 			ProjectionType::PERSPECTIVE_PROJECTION,
 
-			glm::radians(45.0f),
+			45.0f,
 
 			(float)m_width / (float)m_height, 
-			0.1f, 
-			200.0f
+			0.10f, 
+			1000.0f
 		};
 
-		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), projection);
+		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 200.0f), projection);
 
 		GLCORE_INFO("[GLApplication] Camera initiliased");
 	}
@@ -138,14 +139,26 @@ namespace glcore {
 			return;
 		}
 
-		Texture texture("assets/textures/uv_grid_opengl.jpg");
+		m_LastFrameTime = glfwGetTime();
+
+		Texture texture("assets/textures/Skull.jpg");
 		texture.Bind(0);
 
+		auto model = new Model();
+		model->Load("assets/models/12140_Skull_v3_L2.obj");
+
+		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
+		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
 
 		while (!glfwWindowShouldClose(m_window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			float currentFrame = glfwGetTime();
+			float deltaTime = currentFrame - m_LastFrameTime;
+			m_LastFrameTime = currentFrame;
+
+			model->Rotate(glm::vec3(0.0f, 20.0f * deltaTime, 0.0f));
 
 			m_shaderProgram->Bind();
 			if (m_camera->IsViewMatrixDirty())
@@ -158,6 +171,8 @@ namespace glcore {
 				m_shaderProgram->SetUniformMatrix4fv("u_Projection", m_camera->GetProjectionMatrix());
 			}
 
+			m_camera->Update(deltaTime);
+			model->Render(m_shaderProgram.get());
 			RenderMeshes();
 
 			glfwSwapBuffers(m_window);
@@ -199,35 +214,55 @@ namespace glcore {
 
 	void GLApplication::OnCursorMove(double xpos, double ypos)
 	{
-		return;
-		static bool firstMouse = false;
-		static float lastX = 0, lastY = 0;
 
-		if (firstMouse)
+		static bool firstMouse = true;
+		static float lastX = 0, lastY = 0;
+		if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 		{
+			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+			if (firstMouse)
+			{
+				glfwSetCursorPos(m_window, m_width / 2, m_height / 2);
+				lastX = xpos;
+				lastY = ypos;
+				firstMouse = false;
+			}
+
+			float xoffset = xpos - lastX;
+			float yoffset = lastY - ypos;
 			lastX = xpos;
 			lastY = ypos;
-			firstMouse = false;
+
+			float sensitivity = 0.005f;
+			xoffset *= sensitivity;
+			yoffset *= sensitivity;
+			if (xoffset > 1.0f || yoffset > 1.0f)
+			{
+				return;
+			}
+
+			
+
+			//if (pitch > 89.0f)
+			//	pitch = 89.0f;
+			//if (pitch < -89.0f)
+			//	pitch = -89.0f;
+
+			GLCORE_INFO("Pitch %f, Yaw %f", xoffset, yoffset);
+
+			m_camera->Yaw(xoffset);
+			m_camera->Pitch(yoffset);
+		}
+		else if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+		{
+			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			firstMouse = true;
 		}
 
-		float xoffset = xpos - lastX;
-		float yoffset = lastY - ypos;
-		lastX = xpos;
-		lastY = ypos;
-
-		float sensitivity = 5.0f;
-		xoffset *= sensitivity;
-		yoffset *= sensitivity;
 
 
 
-		//if (pitch > 89.0f)
-		//	pitch = 89.0f;
-		//if (pitch < -89.0f)
-		//	pitch = -89.0f;
-
-		//m_camera->Yaw(xoffset);
-		m_camera->Pitch(yoffset);
 	}
 
 	void GLApplication::OnKeyInput(int key, int scancode, int action, int mods)
@@ -255,6 +290,11 @@ namespace glcore {
 			case GLFW_KEY_D:
 			{
 				m_camera->MoveX(-1.0);
+				break;
+			}
+			case GLFW_KEY_Q:
+			{
+				m_camera->Yaw(0.02);
 				break;
 			}
 		}

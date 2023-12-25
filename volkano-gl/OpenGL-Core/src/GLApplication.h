@@ -47,6 +47,7 @@ namespace glcore
 		int m_width = 0;
 		int m_height = 0;
 
+		float m_LastFrameTime = 0.0f;
 		bool m_ctxInitialised = false;
 		std::string m_title = "";
 
