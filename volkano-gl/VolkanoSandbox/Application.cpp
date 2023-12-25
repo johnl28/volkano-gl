@@ -92,8 +92,9 @@ int main()
 
 	auto mesh = new glcore::Mesh(vertices, sizeof(vertices), indicies, sizeof(indicies) / sizeof(GLuint));
 	//mesh->Scale(glm::vec3(0.1f, 0.1f, 0.1f));
-	mesh->Move(glm::vec3(0.0f, 0.0f, -100.0f));
-	app.AddMesh(mesh);
+	mesh->Rotate(glm::vec3(20.0f, 20.0f, 0.0f));
+	//app.AddMesh(mesh);
+
 
 
 	app.Run();
