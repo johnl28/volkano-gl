@@ -1,5 +1,5 @@
 #include "Camera.h"
-
+#include "GLFW/glfw3.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 namespace glcore {
@@ -9,6 +9,11 @@ namespace glcore {
 	{
 		m_CameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 		m_CameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	}
+
+	void Camera::Update(float deltaTime)
+	{
+
 	}
 
 	void Camera::MoveX(float direction)

@@ -24,6 +24,8 @@ namespace glcore {
 	public:
 		Camera(glm::vec3 position, Projection projection);
 
+		void Update(float deltaTime);
+
 		// Movement
 		void MoveX(float direction);
 		void MoveY(float direction);
@@ -49,7 +51,7 @@ namespace glcore {
 	private:
 		float m_Yaw = -90.0f;
 		float m_Pitch = 0.0f;
-		float m_CameraSpeed = 0.05f;
+		float m_CameraSpeed = 0.5f;
 
 		glm::vec3 m_CameraUp;
 		glm::vec3 m_CameraFront;
