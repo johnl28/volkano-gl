@@ -15,7 +15,10 @@ namespace glcore {
 	{
 	public:
 		Mesh(const void *vertexData, size_t vertexDataSize, const GLuint *indexData, GLuint indexCount);
+		Mesh(const Mesh&) = delete;
+		Mesh& operator =(const Mesh&) = delete;
 
+		void LoadTexture(const std::string& texturePath);
 		const glm::mat4& GetTransformMatrix();
 
 		GLuint GetIndexCount() const { return m_indexBuffer->GetCount(); }

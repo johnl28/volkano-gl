@@ -20,6 +20,12 @@ namespace glcore {
 		m_indexBuffer->UnBind();
 	}
 
+	void Mesh::LoadTexture(const std::string& texturePath)
+	{
+		auto texture = new Texture(texturePath);
+		m_texture = 
+	}
+
 	const glm::mat4& Mesh::GetTransformMatrix()
 	{
 		m_transformMatrix = glm::mat4(1.0f);
