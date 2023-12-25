@@ -1,4 +1,4 @@
-#version 400 core
+#version 460 core
 
 layout (location = 0) in vec3 verPos;
 layout (location = 1) in vec2 verTextureCoord;
@@ -13,7 +13,7 @@ uniform mat4 u_Transform;
 
 void main()
 {
-	gl_Position = u_Projection * u_View * u_Transform * vec4(verPos, 1.0f);
+	gl_Position = u_Projection * u_View * u_Transform * vec4(verPos, 1.0);
 
 	FragTextureCoord = verTextureCoord;
 	FragNormals = verNormals;
