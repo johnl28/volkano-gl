@@ -22,12 +22,14 @@ namespace glcore {
 		void Rotate(glm::vec3 deg);
 		void Scale(glm::vec3 scale);
 
+		bool IsLoaded() const { return m_Loaded; }
+
 		const glm::vec3& GetPosition() { return m_Position; }
 		const glm::vec3& GetRotation() { return m_Rotation; }
 		const glm::vec3& GetScale() { return m_Scale; }
 
 	private:
-		void AddAiMesh(aiMesh *aiMesh);
+		void LoadAiMeshData(const aiMesh *aiMesh, const aiMaterial *aiMaterial);
 
 		void UpdateMeshPosition();
 		void UpdateMeshRotation();
@@ -35,6 +37,8 @@ namespace glcore {
 
 
 	private:
+		bool m_Loaded = false;
+
 		glm::vec3 m_Scale = glm::vec3(1.0f);
 		glm::vec3 m_Position = glm::vec3(0.0f);
 		glm::vec3 m_Rotation = glm::vec3(1.0f);

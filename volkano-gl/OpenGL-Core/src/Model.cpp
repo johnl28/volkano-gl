@@ -7,6 +7,13 @@ namespace glcore {
 
 	void Model::Render(ShaderProgram* shader)
 	{
+		if (!m_Loaded)
+		{
+			GLCORE_ERR("[Model] Cannot render a model that is not loaded.");
+			return;
+		}
+
+
 		// Bind shader
 		shader->Bind();
 
@@ -31,6 +38,12 @@ namespace glcore {
 			GLCORE_ERR("[Model] [ASSIMP] Failed to load model %s. Error: %s", filePath.c_str(), importer.GetErrorString());
 			return false;
 		}
+		else if (!aiScene->HasMeshes())
+		{
+			GLCORE_ERR("[Model] Failed to load model %s. This model has no meshes.", filePath.c_str());
+			return false;
+		}
+
 
 		GLCORE_INFO("[Model] Successfull loaded %s. Meshes: %d, Textures: %d, Materials: %d", 
 			filePath.c_str(), aiScene->mNumMeshes, aiScene->mNumTextures, aiScene->mNumMaterials);
@@ -38,15 +51,18 @@ namespace glcore {
 
 		for (unsigned int i = 0; i < aiScene->mNumMeshes; i++)
 		{
-			AddAiMesh(aiScene->mMeshes[i]);
+			auto mesh = aiScene->mMeshes[i];
+			auto material = aiScene->mMaterials[mesh->mMaterialIndex];
+
+			LoadAiMeshData(mesh, material);
 		}
 
-
+		m_Loaded = true;
 		return true;
 	}
 
 
-	void Model::AddAiMesh(aiMesh* aiMesh)
+	void Model::LoadAiMeshData(const aiMesh* aiMesh, const aiMaterial* aiMaterial)
 	{
 		if (!aiMesh)
 		{
