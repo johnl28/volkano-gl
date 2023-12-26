@@ -70,7 +70,6 @@ namespace glcore {
 
 		glViewport(0, 0, m_Width, m_Height);
 		glEnable(GL_DEPTH_TEST);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		auto version = glGetString(GL_VERSION);
 		GLCORE_INFO("%s", (char*)version);
@@ -97,7 +96,7 @@ namespace glcore {
 			1000.0f
 		};
 
-		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 200.0f), projection);
+		m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f), projection);
 
 		GLCORE_INFO("[GLApplication] Camera initiliased");
 	}
@@ -131,6 +130,7 @@ namespace glcore {
 		GLCORE_INFO("[GLApplication] Default shader program initialised");
 	}
 
+
 	void GLApplication::Run()
 	{
 		if (!m_ctxInitialised)
@@ -140,29 +140,26 @@ namespace glcore {
 		}
 
 		m_LastFrameTime = glfwGetTime();
+		
+		auto lampShader = new ShaderProgram();
+		lampShader->LoadShaders("assets/shaders/lamp_vert.glsl", "assets/shaders/lamp_frag.glsl");
 
-		Texture texture("assets/textures/debug/512x512/Gray/Prototype_Grid_Gray_07-512x512.png");
+		Texture texture("assets/textures/uv_grid_opengl.jpg");
 		texture.Bind(0);
 
-		auto model = new Model();
-		model->Load("assets/models/monkey.obj");
-		model->Scale(glm::vec3(0.7f));
-		//model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
+		auto model = LoadModel("assets/models/shapes/cube.fbx");
 		model->Move(glm::vec3(0.0f, -0.6f, 0.0f));
 
-		auto light = new Model();
-		light->Load("assets/models/sphere.obj");
+		auto light = LoadModel("assets/models/shapes/sphere.fbx");
 		light->Move(glm::vec3(1.2f, 1.0f, 2.0f));
-		light->Scale(glm::vec3(0.1f));
-		GLCORE_INFO("Light Pos %f %f %f",  light->GetPosition().x, light->GetPosition().y, light->GetPosition().z);
-		//light->Rotate(glm::vec3(-70.0f, 0.0f, 0.0f));
+		light->Scale(glm::vec3(0.3f));
 
 		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
 
-
-
 		m_shaderProgram->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
+		lampShader->Bind();
+		lampShader->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
 
 		while (!glfwWindowShouldClose(m_window))
 		{
@@ -172,44 +169,23 @@ namespace glcore {
 			float deltaTime = currentFrame - m_LastFrameTime;
 			m_LastFrameTime = currentFrame;
 
-			if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
-			{
-				light->Move(glm::vec3(-0.03, 0.0f, 0.0f));
-			}
-			if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
-			{
-				light->Move(glm::vec3(0.03, 0.0f, 0.0f));
-			}
-			if (glfwGetKey(m_window, GLFW_KEY_U) == GLFW_PRESS)
-			{
-				light->Move(glm::vec3(0.0f, -0.03f, 0.0f));
-			}
-			if (glfwGetKey(m_window, GLFW_KEY_J) == GLFW_PRESS)
-			{
-				light->Move(glm::vec3(0.0f, 0.03f, 0.0f));
-			}
-
-
-			model->Rotate(glm::vec3(0.0f, 20.0f * deltaTime, 0.0f));
-
+			//model->Rotate(glm::vec3(0.0f, 1.0f * deltaTime, 0.0f));
 			m_shaderProgram->Bind();
-			if (m_camera->IsViewMatrixDirty())
-			{
-				m_shaderProgram->SetUniformMatrix4fv("u_View", m_camera->GetViewMatrix());
-			}
+			m_shaderProgram->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
+			m_shaderProgram->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
 
-			if (m_camera->IsProjectionMatrixDirty())
-			{
-				m_shaderProgram->SetUniformMatrix4fv("u_Projection", m_camera->GetProjectionMatrix());
-			}
-
-			m_shaderProgram->SetUniformVec3("u_ViewPos", m_camera->GetPosition());
+			m_shaderProgram->SetUniformVec3("u_ViewPos", m_Camera->GetPosition());
 			m_shaderProgram->SetUniformVec3("u_LightPositon", light->GetPosition());
-			m_camera->Update(deltaTime);
-			model->Render(m_shaderProgram.get());
-			light->Render(m_shaderProgram.get());
+			m_Camera->Update(deltaTime);
 
-			RenderMeshes();
+			lampShader->Bind();
+			lampShader->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
+			lampShader->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
+
+			model->Render(m_shaderProgram.get());
+			light->Render(lampShader);
+
+			//RenderModels();
 
 			glfwSwapBuffers(m_window);
 
@@ -218,34 +194,38 @@ namespace glcore {
 
 	}
 
-	void GLApplication::RenderMeshes()
+	void GLApplication::RenderModels()
 	{
-		for (auto& it : m_meshVec)
+		for (auto& model : m_Models)
 		{
-			RenderMesh(it.get());
+			model->Render(m_shaderProgram.get());
 		}
 	}
 
-	void GLApplication::RenderMesh(Mesh* mesh)
+
+	Model* GLApplication::LoadModel(const std::string& modelPath)
 	{
-		if (!mesh)
+		auto model = new Model();
+		model->Load(modelPath);
+
+		if (!model->IsLoaded())
 		{
-			return;
+			delete model;
+			return nullptr;
 		}
 
-		mesh->Bind();
-		m_shaderProgram->SetUniformMatrix4fv("u_Transform", mesh->GetTransformMatrix());
-
-		glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+		AddModel(model);
+		return model;
 	}
 
-	void GLApplication::AddMesh(Mesh* mesh)
+	void GLApplication::AddModel(Model* model)
 	{
-		m_meshVec.push_back(std::unique_ptr<Mesh>(mesh));
+		m_Models.push_back(std::unique_ptr<Model>(model));
 	}
 
 	void GLApplication::OnScroll(double xoffset, double yoffset)
 	{
+
 	}
 
 	void GLApplication::OnCursorMove(double xpos, double ypos)
@@ -270,7 +250,7 @@ namespace glcore {
 			lastX = xpos;
 			lastY = ypos;
 
-			float sensitivity = 0.005f;
+			float sensitivity = 0.05f;
 			xoffset *= sensitivity;
 			yoffset *= sensitivity;
 			if (xoffset > 1.0f || yoffset > 1.0f)
@@ -285,20 +265,16 @@ namespace glcore {
 			//if (pitch < -89.0f)
 			//	pitch = -89.0f;
 
-			GLCORE_INFO("Pitch %f, Yaw %f", xoffset, yoffset);
+			//GLCORE_INFO("Pitch %f, Yaw %f", xoffset, yoffset);
 
-			m_camera->Yaw(xoffset);
-			m_camera->Pitch(yoffset);
+			m_Camera->Yaw(xoffset);
+			m_Camera->Pitch(yoffset);
 		}
 		else if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 		{
 			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			firstMouse = true;
 		}
-
-
-
-
 	}
 
 	void GLApplication::OnKeyInput(int key, int scancode, int action, int mods)
@@ -307,30 +283,25 @@ namespace glcore {
 		{
 			case GLFW_KEY_W:
 			{
-				m_camera->MoveZ(1.0f);
+				m_Camera->MoveZ(1.0f);
 				break;
 			}
 
 			case GLFW_KEY_S:
 			{
-				m_camera->MoveZ(-1.0f);
+				m_Camera->MoveZ(-1.0f);
 				break;
 			}
 
 			case GLFW_KEY_A:
 			{
-				m_camera->MoveX(1.0f);
+				m_Camera->MoveX(1.0f);
 				break;
 			}
 
 			case GLFW_KEY_D:
 			{
-				m_camera->MoveX(-1.0f);
-				break;
-			}
-			case GLFW_KEY_Q:
-			{
-				m_camera->Yaw(0.02f);
+				m_Camera->MoveX(-1.0f);
 				break;
 			}
 		}
