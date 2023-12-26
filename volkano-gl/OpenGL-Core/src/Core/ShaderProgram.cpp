@@ -68,8 +68,8 @@ namespace glcore {
 	{
 		if (!m_linked)
 		{
-			// Only raise an error
-			assert(false);
+			// maybe only raise an error
+			assert(false && "Cannot bind unlinked shader program. Shaders might failed compiling.");
 		}
 
 		glUseProgram(m_programId);
@@ -78,6 +78,16 @@ namespace glcore {
 	void ShaderProgram::Unbind() const
 	{
 		glUseProgram(0);
+	}
+
+	void ShaderProgram::SetUniformVec4(const std::string& uniform, const glm::vec4& val)
+	{
+		SetUniform4f(uniform, val.x, val.y, val.z, val.w);
+	}
+
+	void ShaderProgram::SetUniformVec3(const std::string& uniform, const glm::vec3& val)
+	{
+		SetUniform3f(uniform, val.x, val.y, val.z);
 	}
 
 	void ShaderProgram::SetUniform1i(const std::string& uniform, GLint v0)
