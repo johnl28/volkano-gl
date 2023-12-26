@@ -44,8 +44,8 @@ namespace glcore
 		void RenderMesh(Mesh* mesh);
 
 	private:
-		int m_width = 0;
-		int m_height = 0;
+		int m_Width = 0;
+		int m_Height = 0;
 
 		float m_LastFrameTime = 0.0f;
 		bool m_ctxInitialised = false;

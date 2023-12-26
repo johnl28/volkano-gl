@@ -19,8 +19,8 @@ namespace glcore {
 
 	GLApplication::GLApplication(int width, int height, const std::string& title)
 	{
-		m_width = width;
-		m_height = height;
+		m_Width = width;
+		m_Height = height;
 		m_title = title;
 
 		InitGLFW();
@@ -50,7 +50,7 @@ namespace glcore {
 		glfwSetErrorCallback(GlErrorCallback);
 
 
-		m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), NULL, NULL);
+		m_window = glfwCreateWindow(m_Width, m_Height, m_title.c_str(), NULL, NULL);
 		if (m_window == nullptr)
 		{
 			GLCORE_ERR("[GLApplication] Failed to create window");
@@ -68,9 +68,9 @@ namespace glcore {
 			return;
 		}
 
-		glViewport(0, 0, m_width, m_height);
+		glViewport(0, 0, m_Width, m_Height);
 		glEnable(GL_DEPTH_TEST);
-
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		auto version = glGetString(GL_VERSION);
 		GLCORE_INFO("%s", (char*)version);
@@ -92,7 +92,7 @@ namespace glcore {
 
 			45.0f,
 
-			(float)m_width / (float)m_height, 
+			(float)m_Width / (float)m_Height, 
 			0.10f, 
 			1000.0f
 		};
@@ -141,14 +141,28 @@ namespace glcore {
 
 		m_LastFrameTime = glfwGetTime();
 
-		Texture texture("assets/textures/Skull.jpg");
+		Texture texture("assets/textures/debug/512x512/Gray/Prototype_Grid_Gray_07-512x512.png");
 		texture.Bind(0);
 
 		auto model = new Model();
-		model->Load("assets/models/12140_Skull_v3_L2.obj");
+		model->Load("assets/models/monkey.obj");
+		model->Scale(glm::vec3(0.7f));
+		//model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
+		model->Move(glm::vec3(0.0f, -0.6f, 0.0f));
+
+		auto light = new Model();
+		light->Load("assets/models/sphere.obj");
+		light->Move(glm::vec3(1.2f, 1.0f, 2.0f));
+		light->Scale(glm::vec3(0.1f));
+		GLCORE_INFO("Light Pos %f %f %f",  light->GetPosition().x, light->GetPosition().y, light->GetPosition().z);
+		//light->Rotate(glm::vec3(-70.0f, 0.0f, 0.0f));
 
 		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
+
+
+
+		m_shaderProgram->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
 
 		while (!glfwWindowShouldClose(m_window))
 		{
@@ -157,6 +171,24 @@ namespace glcore {
 			float currentFrame = glfwGetTime();
 			float deltaTime = currentFrame - m_LastFrameTime;
 			m_LastFrameTime = currentFrame;
+
+			if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+			{
+				light->Move(glm::vec3(-0.03, 0.0f, 0.0f));
+			}
+			if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
+			{
+				light->Move(glm::vec3(0.03, 0.0f, 0.0f));
+			}
+			if (glfwGetKey(m_window, GLFW_KEY_U) == GLFW_PRESS)
+			{
+				light->Move(glm::vec3(0.0f, -0.03f, 0.0f));
+			}
+			if (glfwGetKey(m_window, GLFW_KEY_J) == GLFW_PRESS)
+			{
+				light->Move(glm::vec3(0.0f, 0.03f, 0.0f));
+			}
+
 
 			model->Rotate(glm::vec3(0.0f, 20.0f * deltaTime, 0.0f));
 
@@ -171,8 +203,12 @@ namespace glcore {
 				m_shaderProgram->SetUniformMatrix4fv("u_Projection", m_camera->GetProjectionMatrix());
 			}
 
+			m_shaderProgram->SetUniformVec3("u_ViewPos", m_camera->GetPosition());
+			m_shaderProgram->SetUniformVec3("u_LightPositon", light->GetPosition());
 			m_camera->Update(deltaTime);
 			model->Render(m_shaderProgram.get());
+			light->Render(m_shaderProgram.get());
+
 			RenderMeshes();
 
 			glfwSwapBuffers(m_window);
@@ -223,7 +259,7 @@ namespace glcore {
 
 			if (firstMouse)
 			{
-				glfwSetCursorPos(m_window, m_width / 2, m_height / 2);
+				glfwSetCursorPos(m_window, m_Width / 2, m_Height / 2);
 				lastX = xpos;
 				lastY = ypos;
 				firstMouse = false;
@@ -289,12 +325,12 @@ namespace glcore {
 
 			case GLFW_KEY_D:
 			{
-				m_camera->MoveX(-1.0);
+				m_camera->MoveX(-1.0f);
 				break;
 			}
 			case GLFW_KEY_Q:
 			{
-				m_camera->Yaw(0.02);
+				m_camera->Yaw(0.02f);
 				break;
 			}
 		}
