@@ -19,7 +19,7 @@ namespace glcore
         switch (type) 
         {
         case LogType::INFO:
-            std::cout << "[INFO] ";
+            std::cout << "\033[37m[INFO] ";
             break;
         case LogType::WARNING:
             std::cout << "\033[33m[WARNING] ";
