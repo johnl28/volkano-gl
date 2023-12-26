@@ -6,69 +6,75 @@ namespace glcore {
 
 	Mesh::Mesh(const void* vertexData, size_t vertexDataSize, const GLuint* indexData, GLuint indexCount)
 	{
-		m_vertexArray = std::make_unique<VertexArray>();
-		m_vertexBuffer = std::make_unique<VertexBuffer>(vertexData, vertexDataSize);
-		m_indexBuffer = std::make_unique<IndexBuffer>(indexData, indexCount);
+		m_VertexArray = std::make_unique<VertexArray>();
+		m_VertexBuffer = std::make_unique<VertexBuffer>(vertexData, vertexDataSize);
+		m_IndexBuffer = std::make_unique<IndexBuffer>(indexData, indexCount);
 
-		m_vertexArray->AddAttribute<GLfloat>(3);
-		m_vertexArray->AddAttribute<GLfloat>(2);
-		m_vertexArray->AddAttribute<GLfloat>(3);
-		m_vertexArray->CreateAttribPointers();
+		m_VertexArray->AddAttribute<GLfloat>(3);
+		m_VertexArray->AddAttribute<GLfloat>(2);
+		m_VertexArray->AddAttribute<GLfloat>(3);
+		m_VertexArray->CreateAttribPointers();
 
-		m_vertexArray->UnBind();
-		m_vertexBuffer->UnBind();
-		m_indexBuffer->UnBind();
+		m_VertexArray->UnBind();
+		m_VertexBuffer->UnBind();
+		m_IndexBuffer->UnBind();
 	}
 
 	void Mesh::LoadTexture(const std::string& texturePath)
 	{
 		auto texture = new Texture(texturePath);
-		m_texture = 
+		if (!texture->IsLoaded())
+		{
+			delete texture;
+			return;
+		}
+
+		m_Texture = std::unique_ptr<Texture>(texture);
 	}
 
 	const glm::mat4& Mesh::GetTransformMatrix()
 	{
-		m_transformMatrix = glm::mat4(1.0f);
-		m_transformMatrix = glm::translate(m_transformMatrix, m_Position);
-		m_transformMatrix = glm::scale(m_transformMatrix, m_scale);
+		m_TransformMatrix = glm::mat4(1.0f);
+		m_TransformMatrix = glm::translate(m_TransformMatrix, m_Position);
+		m_TransformMatrix = glm::scale(m_TransformMatrix, m_Scale);
 
-		m_transformMatrix = glm::rotate(m_transformMatrix, m_rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-		m_transformMatrix = glm::rotate(m_transformMatrix, m_rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		m_transformMatrix = glm::rotate(m_transformMatrix, m_rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		m_TransformMatrix = glm::rotate(m_TransformMatrix, m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		m_TransformMatrix = glm::rotate(m_TransformMatrix, m_Rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		m_TransformMatrix = glm::rotate(m_TransformMatrix, m_Rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
 
-		return m_transformMatrix;
+		return m_TransformMatrix;
 	}
 
-	void Mesh::Move(glm::vec3 velocity)
+	void Mesh::SetPosition(const glm::vec3& newPosition)
 	{
-		m_Position += velocity;
+		m_Position = newPosition;
 	}
 
-	void Mesh::Rotate(glm::vec3 deg)
+	void Mesh::SetRotation(const glm::vec3& newRotation)
 	{
-		m_rotation += deg;
+		m_Rotation = newRotation;
 	}
 
-	void Mesh::Scale(glm::vec3 scale)
+	void Mesh::SetScale(const glm::vec3& newScale)
 	{
-		m_scale = scale;
+		m_Scale = newScale;
 	}
 
 	void Mesh::Bind() const
 	{
-		m_vertexArray->Bind();
-		if (m_texture)
+		m_VertexArray->Bind();
+		if (m_Texture)
 		{
-			m_texture->Bind(0);
+			m_Texture->Bind(0);
 		}
 	}
 
 	void Mesh::UnBind() const
 	{
-		m_vertexArray->UnBind();
-		if (m_texture)
+		m_VertexArray->UnBind();
+		if (m_Texture)
 		{
-			m_texture->UnBind();
+			m_Texture->UnBind();
 		}
 	}
 
