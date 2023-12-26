@@ -78,6 +78,11 @@ namespace glcore {
 		return m_ProjectionMatrix;
 	}
 
+	const glm::vec3& Camera::GetPosition()
+	{
+		return m_Position;
+	}
+
 	void Camera::UpdateProjectionMatrix()
 	{
 		m_ProjectionMatrix = glm::perspective(glm::radians(m_Projection.fov), m_Projection.aspect, m_Projection.near, m_Projection.far);

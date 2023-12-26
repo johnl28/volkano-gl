@@ -37,8 +37,9 @@ namespace glcore {
 
 
 		// Matrix
-		const glm::mat4 &GetViewMatrix();
-		const glm::mat4 &GetProjectionMatrix();
+		const glm::mat4& GetViewMatrix();
+		const glm::mat4& GetProjectionMatrix();
+		const glm::vec3& GetPosition();
 
 		bool IsViewMatrixDirty() const { return m_isViewMatrixDirty; }
 		bool IsProjectionMatrixDirty() const { return m_isProjectionMatrixDirty; }
