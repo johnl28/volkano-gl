@@ -5,6 +5,7 @@ namespace glcore
 {
 	enum class LogType {
 		INFO,
+		DEBUG,
 		WARNING,
 		ERROR
 	};
@@ -21,6 +22,7 @@ namespace glcore
 
 #ifdef _DEBUG
 #define GLCORE_INFO(...) ::glcore::Log::PrintLog(glcore::LogType::INFO, __VA_ARGS__)
+#define GLCORE_DEBUG(...) ::glcore::Log::PrintLog(glcore::LogType::DEBUG, __VA_ARGS__)
 #else
 #define GLCORE_INFO(...)
 #endif
