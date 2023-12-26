@@ -18,12 +18,15 @@ namespace glcore {
 		void Bind(GLuint sampler = 0) const;
 		void UnBind() const;
 
+		bool IsLoaded() const { return m_Loaded; }
+
 	private:
 		GLuint m_textureID = 0;
+		bool m_Loaded = false;
 
-		int m_width = 0;
-		int m_height = 0;
-		int m_BPP = 0;
+		int m_Width = 0;
+		int m_Height = 0;
+		int m_Channels = 0;
 	};
 
 }

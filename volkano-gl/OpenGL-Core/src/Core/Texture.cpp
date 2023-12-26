@@ -11,7 +11,7 @@ namespace glcore {
 			stbi_set_flip_vertically_on_load(1);
 		}
 
-		auto textureBuffer = stbi_load(texturePath.c_str(), &m_width, &m_height, &m_BPP, 4);
+		auto textureBuffer = stbi_load(texturePath.c_str(), &m_Width, &m_Height, &m_Channels, 4);
 		if (!textureBuffer)
 		{
 			GLCORE_ERR("[Texture] Failed to load texture file %s", texturePath.c_str());
@@ -26,9 +26,10 @@ namespace glcore {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
 		stbi_image_free(textureBuffer);
 
+		m_Loaded = true;
 		UnBind();
 	}
 
