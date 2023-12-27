@@ -147,8 +147,9 @@ namespace glcore {
 		Texture texture("assets/textures/uv_grid_opengl.jpg");
 		texture.Bind(0);
 
-		auto model = LoadModel("assets/models/shapes/cube.fbx");
-		model->Move(glm::vec3(0.0f, -0.6f, 0.0f));
+		auto model = LoadModel("assets/models/shapes/plane.fbx");
+		model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
+		model->Scale(glm::vec3(15.0f, 1.0f, 15.0f));
 
 		auto light = LoadModel("assets/models/shapes/sphere.fbx");
 		light->Move(glm::vec3(1.2f, 1.0f, 2.0f));
@@ -169,7 +170,6 @@ namespace glcore {
 			float deltaTime = currentFrame - m_LastFrameTime;
 			m_LastFrameTime = currentFrame;
 
-			//model->Rotate(glm::vec3(0.0f, 1.0f * deltaTime, 0.0f));
 			m_shaderProgram->Bind();
 			m_shaderProgram->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
 			m_shaderProgram->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
