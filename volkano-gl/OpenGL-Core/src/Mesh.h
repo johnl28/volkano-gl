@@ -32,6 +32,9 @@ namespace glcore {
 		void UnBind() const;
 
 	private:
+		void UpdateTransformMatrix();
+
+	private:
 		glm::mat4 m_TransformMatrix = glm::mat4(1.0f);
 		glm::vec3 m_Position = glm::vec3(0.0f);
 		glm::vec3 m_Rotation = glm::vec3(0.0f);

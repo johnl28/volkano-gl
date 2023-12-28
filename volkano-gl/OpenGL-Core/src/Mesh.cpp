@@ -34,6 +34,29 @@ namespace glcore {
 
 	const glm::mat4& Mesh::GetTransformMatrix()
 	{
+		return m_TransformMatrix;
+	}
+
+	void Mesh::SetPosition(const glm::vec3& newPosition)
+	{
+		m_Position = newPosition;
+		UpdateTransformMatrix();
+	}
+
+	void Mesh::SetRotation(const glm::vec3& newRotation)
+	{
+		m_Rotation = newRotation;
+		UpdateTransformMatrix();
+	}
+
+	void Mesh::SetScale(const glm::vec3& newScale)
+	{
+		m_Scale = newScale;
+		UpdateTransformMatrix();
+	}
+
+	void Mesh::UpdateTransformMatrix()
+	{
 		m_TransformMatrix = glm::mat4(1.0f);
 		m_TransformMatrix = glm::translate(m_TransformMatrix, m_Position);
 		m_TransformMatrix = glm::scale(m_TransformMatrix, m_Scale);
@@ -41,23 +64,6 @@ namespace glcore {
 		m_TransformMatrix = glm::rotate(m_TransformMatrix, m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 		m_TransformMatrix = glm::rotate(m_TransformMatrix, m_Rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 		m_TransformMatrix = glm::rotate(m_TransformMatrix, m_Rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		return m_TransformMatrix;
-	}
-
-	void Mesh::SetPosition(const glm::vec3& newPosition)
-	{
-		m_Position = newPosition;
-	}
-
-	void Mesh::SetRotation(const glm::vec3& newRotation)
-	{
-		m_Rotation = newRotation;
-	}
-
-	void Mesh::SetScale(const glm::vec3& newScale)
-	{
-		m_Scale = newScale;
 	}
 
 	void Mesh::Bind() const
