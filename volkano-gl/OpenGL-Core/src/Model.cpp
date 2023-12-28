@@ -114,12 +114,13 @@ namespace glcore {
 		auto myMesh = new Mesh(vertices.data(), sizeof(Vertex) * vertices.size(), indices.data(), indices.size());
 		m_Meshes.push_back(std::unique_ptr<Mesh>(myMesh));
 
-		GLCORE_INFO("[Model] [Mesh] Successfull loaded. Faces: %d, Vertices: %d, Has Normals: %d", aiMesh->mNumFaces, aiMesh->mNumVertices, aiMesh->HasNormals());
+		GLCORE_INFO("[Model] [Mesh] Successfull loaded mesh %s. Faces: %d, Vertices: %d, Has Normals: %d", 
+		 aiMesh->mName.C_Str(),	aiMesh->mNumFaces, aiMesh->mNumVertices, aiMesh->HasNormals());
 	}
 
 
 
-	void Model::Move(glm::vec3 velocity)
+	void Model::Move(const glm::vec3& velocity)
 	{
 		m_Position += velocity;
 		UpdateMeshPosition();
@@ -133,7 +134,7 @@ namespace glcore {
 		}
 	}
 
-	void Model::Rotate(glm::vec3 deg)
+	void Model::Rotate(const glm::vec3& deg)
 	{
 		m_Rotation += deg;
 		UpdateMeshRotation();
@@ -147,7 +148,7 @@ namespace glcore {
 		}
 	}
 
-	void Model::Scale(glm::vec3 scale)
+	void Model::Scale(const glm::vec3& scale)
 	{
 		m_Scale = scale;
 		UpdateMeshScale();

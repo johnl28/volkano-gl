@@ -18,11 +18,18 @@ namespace glcore {
 		void Render(ShaderProgram *shader);
 		bool Load(const std::string& filePath);
 		
-		void Move(glm::vec3 velocity);
-		void Rotate(glm::vec3 deg);
-		void Scale(glm::vec3 scale);
-
 		bool IsLoaded() const { return m_Loaded; }
+
+
+
+		// Transform
+		void Move(const glm::vec3& velocity);
+		void SetPosition(const glm::vec3& position);
+
+		void Rotate(const glm::vec3& deg);
+		void SetRotation(const glm::vec3& rotation);
+
+		void Scale(const glm::vec3& scale);
 
 		const glm::vec3& GetPosition() { return m_Position; }
 		const glm::vec3& GetRotation() { return m_Rotation; }
