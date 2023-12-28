@@ -139,7 +139,7 @@ namespace glcore {
 			return;
 		}
 
-		m_LastFrameTime = glfwGetTime();
+		m_DeltaTime = glfwGetTime();
 		
 		auto lampShader = new ShaderProgram();
 		lampShader->LoadShaders("assets/shaders/lamp_vert.glsl", "assets/shaders/lamp_frag.glsl");
@@ -147,9 +147,9 @@ namespace glcore {
 		Texture texture("assets/textures/uv_grid_opengl.jpg");
 		texture.Bind(0);
 
-		auto model = LoadModel("assets/models/shapes/plane.fbx");
-		model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
-		model->Scale(glm::vec3(15.0f, 1.0f, 15.0f));
+		auto model = LoadModel("assets/models/shapes/sphere.fbx");
+		model->Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
+		model->Scale(glm::vec3(0.3f));
 
 		auto light = LoadModel("assets/models/shapes/sphere.fbx");
 		light->Move(glm::vec3(1.2f, 1.0f, 2.0f));
@@ -158,6 +158,7 @@ namespace glcore {
 		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
 
+		m_shaderProgram->Bind();
 		m_shaderProgram->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
 		lampShader->Bind();
 		lampShader->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
@@ -166,9 +167,7 @@ namespace glcore {
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			float currentFrame = glfwGetTime();
-			float deltaTime = currentFrame - m_LastFrameTime;
-			m_LastFrameTime = currentFrame;
+			CalculateFrameTime();
 
 			m_shaderProgram->Bind();
 			m_shaderProgram->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
@@ -176,7 +175,7 @@ namespace glcore {
 
 			m_shaderProgram->SetUniformVec3("u_ViewPos", m_Camera->GetPosition());
 			m_shaderProgram->SetUniformVec3("u_LightPositon", light->GetPosition());
-			m_Camera->Update(deltaTime);
+			m_Camera->Update(m_DeltaTime);
 
 			lampShader->Bind();
 			lampShader->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
@@ -200,6 +199,15 @@ namespace glcore {
 		{
 			model->Render(m_shaderProgram.get());
 		}
+	}
+
+	void GLApplication::CalculateFrameTime()
+	{
+		static auto lastFrameTime = glfwGetTime();
+		auto currentFrameTime = glfwGetTime();
+
+		m_DeltaTime = currentFrameTime - lastFrameTime;
+		lastFrameTime = currentFrameTime;
 	}
 
 
@@ -230,7 +238,7 @@ namespace glcore {
 
 	void GLApplication::OnCursorMove(double xpos, double ypos)
 	{
-
+		// imediate mode camera look
 		static bool firstMouse = true;
 		static float lastX = 0, lastY = 0;
 		if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
@@ -249,23 +257,6 @@ namespace glcore {
 			float yoffset = lastY - ypos;
 			lastX = xpos;
 			lastY = ypos;
-
-			float sensitivity = 0.05f;
-			xoffset *= sensitivity;
-			yoffset *= sensitivity;
-			if (xoffset > 1.0f || yoffset > 1.0f)
-			{
-				return;
-			}
-
-			
-
-			//if (pitch > 89.0f)
-			//	pitch = 89.0f;
-			//if (pitch < -89.0f)
-			//	pitch = -89.0f;
-
-			//GLCORE_INFO("Pitch %f, Yaw %f", xoffset, yoffset);
 
 			m_Camera->Yaw(xoffset);
 			m_Camera->Pitch(yoffset);
