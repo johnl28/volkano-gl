@@ -14,7 +14,6 @@ uniform vec3 u_ViewPos;
 
 void main()
 {
-    vec3 u_LightColor = vec3(1.0);
 	vec3 textureColor = texture(u_Texture, FragTextureCoord).rgb;
 
     // Ambient
