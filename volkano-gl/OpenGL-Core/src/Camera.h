@@ -53,6 +53,7 @@ namespace glcore {
 		float m_Yaw = -90.0f;
 		float m_Pitch = 0.0f;
 		float m_CameraSpeed = 0.3f;
+		float m_Sensitivity = 0.1f;
 
 		glm::vec3 m_CameraUp;
 		glm::vec3 m_CameraFront;

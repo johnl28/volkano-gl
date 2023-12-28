@@ -36,13 +36,23 @@ namespace glcore {
 
 	void Camera::Yaw(float offset)
 	{
-		m_Yaw += offset;
+		m_Yaw += offset * m_Sensitivity;
 		m_isViewMatrixDirty = true;
 	}
 
 	void Camera::Pitch(float offset)
 	{
-		m_Pitch += offset;
+		m_Pitch += offset * m_Sensitivity;
+
+		if (m_Pitch > 89.0f)
+		{
+			m_Pitch = 89.0f;
+		}
+		else if (m_Pitch < -89.0f)
+		{
+			m_Pitch = -89.0f;
+		}
+
 		m_isViewMatrixDirty = true;
 	}
 
