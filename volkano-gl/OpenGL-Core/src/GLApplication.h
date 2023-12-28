@@ -44,12 +44,13 @@ namespace glcore
 		void InitDefaultShaderProgram();
 
 		void RenderModels();
+		void CalculateFrameTime();
 
 	private:
 		int m_Width = 0;
 		int m_Height = 0;
 
-		float m_LastFrameTime = 0.0f;
+		double m_DeltaTime = 0.0f;
 		bool m_ctxInitialised = false;
 		std::string m_title = "";
 
