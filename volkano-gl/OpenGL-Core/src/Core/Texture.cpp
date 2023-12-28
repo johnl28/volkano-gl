@@ -6,10 +6,9 @@ namespace glcore {
 
 	Texture::Texture(const std::string& texturePath, bool flip)
 	{
-		if (flip)
-		{
-			stbi_set_flip_vertically_on_load(1);
-		}
+
+		stbi_set_flip_vertically_on_load(static_cast<int>(flip));
+		
 
 		auto textureBuffer = stbi_load(texturePath.c_str(), &m_Width, &m_Height, &m_Channels, 4);
 		if (!textureBuffer)
@@ -29,6 +28,7 @@ namespace glcore {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
 		stbi_image_free(textureBuffer);
 
+		GLCORE_INFO("[Texture] Texture loaded successfully %s", texturePath.c_str());
 		m_Loaded = true;
 		UnBind();
 	}
