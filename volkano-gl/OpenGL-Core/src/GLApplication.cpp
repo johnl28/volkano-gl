@@ -144,10 +144,10 @@ namespace glcore {
 		auto lampShader = new ShaderProgram();
 		lampShader->LoadShaders("assets/shaders/lamp_vert.glsl", "assets/shaders/lamp_frag.glsl");
 
-		Texture texture("assets/textures/uv_grid_opengl.jpg");
+		Texture texture("assets/textures/GreyboxTextures/greybox_light_grid.png");
 		texture.Bind(0);
 
-		auto model = LoadModel("assets/models/shapes/sphere.fbx");
+		auto model = LoadModel("assets/models/shapes/cube.fbx");
 		model->Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
 		model->Scale(glm::vec3(0.3f));
 

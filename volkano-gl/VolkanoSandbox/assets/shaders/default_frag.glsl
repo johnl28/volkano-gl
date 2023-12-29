@@ -17,7 +17,7 @@ void main()
 	vec3 textureColor = texture(u_Texture, FragTextureCoord).rgb;
 
     // Ambient
-    float ambientStrength = 0.3;
+    float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * u_LightColor;
 
     // Diffuse
