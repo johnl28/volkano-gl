@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <map>
 
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
@@ -33,6 +34,12 @@ namespace glcore
 		Model* LoadModel(const std::string& modelPath);
 		void AddModel(Model *model);
 
+		
+		ShaderProgram* GetShader(const std::string& shaderName) const;
+		ShaderProgram* LoadShaders(const std::string& shaderName, const std::string& verShaderFile, const std::string& fragShaderFile);
+		void AddShader(const std::string& shaderName, ShaderProgram* shader);
+
+
 		void OnScroll(double xoffset, double yoffset);
 		void OnCursorMove(double xpos, double ypos);
 		void OnKeyInput(int key, int scancode, int action, int mods);
@@ -57,6 +64,7 @@ namespace glcore
 		GLFWwindow* m_window = nullptr;
 
 		std::vector<std::unique_ptr<Model>> m_Models;
+		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;
 
 		std::unique_ptr<Camera> m_Camera = nullptr;
 

@@ -141,8 +141,7 @@ namespace glcore {
 
 		m_DeltaTime = glfwGetTime();
 		
-		auto lampShader = new ShaderProgram();
-		lampShader->LoadShaders("assets/shaders/lamp_vert.glsl", "assets/shaders/lamp_frag.glsl");
+		auto lampShader = LoadShaders("lampShader", "assets/shaders/lamp_vert.glsl", "assets/shaders/lamp_frag.glsl");
 
 		Texture texture("assets/textures/GreyboxTextures/greybox_light_grid.png");
 		texture.Bind(0);
@@ -229,6 +228,36 @@ namespace glcore {
 	void GLApplication::AddModel(Model* model)
 	{
 		m_Models.push_back(std::unique_ptr<Model>(model));
+	}
+
+	ShaderProgram* GLApplication::GetShader(const std::string& shaderName) const
+	{
+		auto it = m_Shaders.find(shaderName);
+		if (it == m_Shaders.end())
+		{
+			return nullptr;
+		}
+
+		return it->second.get();
+	}
+
+	ShaderProgram* GLApplication::LoadShaders(const std::string& shaderName, const std::string& verShaderFile, const std::string& fragShaderFile)
+	{
+		auto shader = new ShaderProgram();
+		shader->LoadShaders(verShaderFile, fragShaderFile);
+		if (!shader->IsLinked())
+		{
+			delete shader;
+			return nullptr;
+		}
+
+		AddShader(shaderName, shader);
+		return shader;
+	}
+
+	void GLApplication::AddShader(const std::string& shaderName, ShaderProgram* shader)
+	{
+		m_Shaders[shaderName] = std::unique_ptr<ShaderProgram>(shader);
 	}
 
 	void GLApplication::OnScroll(double xoffset, double yoffset)
