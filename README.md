@@ -33,7 +33,7 @@ The project contains a Visual Studio 2022 solution with 2 projects associated:
 - **OpenGL-Core** a static library that has the OpenGL implementation
 - **Sandbox** an executable that implements the static library
 
-All the external code should be placed in a directory called **dependencies** placed at the same level as the solution. 
+All the external code should be located in a directory called **dependencies** placed at the same level as the solution. 
 
 The dependencies structure should look like this
 ```
