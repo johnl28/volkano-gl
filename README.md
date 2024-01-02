@@ -42,6 +42,7 @@ volkano-gl.sln
 dependencies
   include/
     GLFW/
+    stb/
 
   lib/
     glfw3.lib
