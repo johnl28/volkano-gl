@@ -34,7 +34,7 @@ namespace glcore {
 			glEnableVertexAttribArray(i);
 			glVertexAttribPointer(i, attr.count, attr.type, attr.normalized, (GLsizei)m_stride, (const void*)offset);
 
-			offset = attr.count * VertexAttribute::GetAttrSize(attr.type);
+			offset += attr.count * VertexAttribute::GetAttrSize(attr.type);
 		}
 	}
 
