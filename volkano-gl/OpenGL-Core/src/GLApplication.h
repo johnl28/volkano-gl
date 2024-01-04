@@ -63,14 +63,12 @@ namespace glcore
 
 		GLFWwindow* m_Window = nullptr;
 
-		std::vector<std::unique_ptr<Model>> m_Models;
-		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;
-
 		std::unique_ptr<Camera> m_Camera = nullptr;
 
-		// Short-term 
-		// todo: Create a map to store multiple shaders used by different materials
-		std::unique_ptr<ShaderProgram> m_shaderProgram = nullptr;
+		std::vector<std::unique_ptr<Model>> m_Models;
+
+		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;
+		std::unique_ptr<ShaderProgram> m_DefaultShader = nullptr;
 	};
 
 }
