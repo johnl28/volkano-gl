@@ -15,14 +15,14 @@ uniform vec3 u_ViewPos;
 void main()
 {
 	vec3 textureColor = texture(u_Texture, FragTextureCoord).rgb;
+    vec3 lightDir = normalize(u_LightPositon - FragPos);
+
 
     // Ambient
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * u_LightColor;
 
     // Diffuse
-    vec3 lightDir = normalize(u_LightPositon - FragPos);
-
 	vec3 norm = normalize(FragNormals);
     float diff = max(dot(norm, lightDir), 0.0);
     
@@ -38,7 +38,8 @@ void main()
     vec3 specular = specularStrength * spec * u_LightColor;
 
 
-    vec3 result = (ambient + diffuse + specular) * textureColor;
+    vec3 result = (ambient + diffuse) * textureColor;
+
 
 
 	FragColor = vec4(result, 1.0);

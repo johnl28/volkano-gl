@@ -21,7 +21,7 @@ namespace glcore {
 	{
 		m_Width = width;
 		m_Height = height;
-		m_title = title;
+		m_Title = title;
 
 		InitGLFW();
 		InitInputEvents();
@@ -31,7 +31,7 @@ namespace glcore {
 
 	GLApplication::~GLApplication()
 	{
-		glfwDestroyWindow(m_window);
+		glfwDestroyWindow(m_Window);
 		glfwTerminate();
 	}
 
@@ -50,8 +50,8 @@ namespace glcore {
 		glfwSetErrorCallback(GlErrorCallback);
 
 
-		m_window = glfwCreateWindow(m_Width, m_Height, m_title.c_str(), NULL, NULL);
-		if (m_window == nullptr)
+		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
+		if (m_Window == nullptr)
 		{
 			GLCORE_ERR("[GLApplication] Failed to create window");
 			glfwTerminate();
@@ -59,8 +59,8 @@ namespace glcore {
 		}
 
 
-		glfwMakeContextCurrent(m_window);
-		glfwSetWindowUserPointer(m_window, this);
+		glfwMakeContextCurrent(m_Window);
+		glfwSetWindowUserPointer(m_Window, this);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
@@ -108,9 +108,9 @@ namespace glcore {
 			return;
 		}
 
-		glfwSetKeyCallback(m_window, GlKeyInputCallback);
-		glfwSetScrollCallback(m_window, GlScrollCallback);
-		glfwSetCursorPosCallback(m_window, GlCursorPosCallback);
+		glfwSetKeyCallback(m_Window, GlKeyInputCallback);
+		glfwSetScrollCallback(m_Window, GlScrollCallback);
+		glfwSetCursorPosCallback(m_Window, GlCursorPosCallback);
 	}
 
 	void GLApplication::InitDefaultShaderProgram()
@@ -148,10 +148,10 @@ namespace glcore {
 
 		auto model = LoadModel("assets/models/shapes/cube.fbx");
 		model->Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
-		model->Scale(glm::vec3(0.3f));
+		//model->Scale(glm::vec3(0.3f));
 
 		auto light = LoadModel("assets/models/shapes/sphere.fbx");
-		light->Move(glm::vec3(1.2f, 1.0f, 2.0f));
+		light->Move(glm::vec3(3.0f, 0.0f, 0.0f));
 		light->Scale(glm::vec3(0.3f));
 
 		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
@@ -162,7 +162,7 @@ namespace glcore {
 		lampShader->Bind();
 		lampShader->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
 
-		while (!glfwWindowShouldClose(m_window))
+		while (!glfwWindowShouldClose(m_Window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -173,7 +173,7 @@ namespace glcore {
 			m_shaderProgram->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
 
 			m_shaderProgram->SetUniformVec3("u_ViewPos", m_Camera->GetPosition());
-			m_shaderProgram->SetUniformVec3("u_LightPositon", light->GetPosition());
+			m_shaderProgram->SetUniformVec3("u_LightPositon", glm::vec3(3.0f, 0.0f, 0.0f));
 			m_Camera->Update(m_DeltaTime);
 
 			lampShader->Bind();
@@ -185,7 +185,7 @@ namespace glcore {
 
 			//RenderModels();
 
-			glfwSwapBuffers(m_window);
+			glfwSwapBuffers(m_Window);
 
 			glfwPollEvents();
 		}
@@ -270,13 +270,12 @@ namespace glcore {
 		// imediate mode camera look
 		static bool firstMouse = true;
 		static float lastX = 0, lastY = 0;
-		if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 		{
-			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 			if (firstMouse)
 			{
-				glfwSetCursorPos(m_window, m_Width / 2, m_Height / 2);
 				lastX = xpos;
 				lastY = ypos;
 				firstMouse = false;
@@ -290,9 +289,9 @@ namespace glcore {
 			m_Camera->Yaw(xoffset);
 			m_Camera->Pitch(yoffset);
 		}
-		else if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+		else if(glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 		{
-			glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			firstMouse = true;
 		}
 	}

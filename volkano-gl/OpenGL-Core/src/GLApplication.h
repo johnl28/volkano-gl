@@ -59,9 +59,9 @@ namespace glcore
 
 		double m_DeltaTime = 0.0f;
 		bool m_ctxInitialised = false;
-		std::string m_title = "";
+		std::string m_Title = "";
 
-		GLFWwindow* m_window = nullptr;
+		GLFWwindow* m_Window = nullptr;
 
 		std::vector<std::unique_ptr<Model>> m_Models;
 		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;
