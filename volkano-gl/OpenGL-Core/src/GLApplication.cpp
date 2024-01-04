@@ -120,9 +120,9 @@ namespace glcore {
 			return;
 		}
 
-		m_shaderProgram = std::make_unique<ShaderProgram>();
-		m_shaderProgram->LoadShaders("assets/shaders/default_vert.glsl", "assets/shaders/default_frag.glsl");
-		if (!m_shaderProgram->IsLinked())
+		m_DefaultShader = std::make_unique<ShaderProgram>();
+		m_DefaultShader->LoadShaders("assets/shaders/default_vert.glsl", "assets/shaders/default_frag.glsl");
+		if (!m_DefaultShader->IsLinked())
 		{
 			return;
 		}
@@ -146,8 +146,8 @@ namespace glcore {
 		Texture texture("assets/textures/GreyboxTextures/greybox_light_grid.png");
 		texture.Bind(0);
 
-		auto model = LoadModel("assets/models/shapes/cube.fbx");
-		model->Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
+		auto model = LoadModel("assets/models/shapes/sphere.fbx");
+		model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
 		//model->Scale(glm::vec3(0.3f));
 
 		auto light = LoadModel("assets/models/shapes/sphere.fbx");
@@ -157,8 +157,8 @@ namespace glcore {
 		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
 
-		m_shaderProgram->Bind();
-		m_shaderProgram->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
+		m_DefaultShader->Bind();
+		m_DefaultShader->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
 		lampShader->Bind();
 		lampShader->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
 
@@ -166,23 +166,50 @@ namespace glcore {
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			if (glfwGetKey(m_Window, GLFW_KEY_Q))
+			{
+				light->Move(glm::vec3(-0.1, 0.0f, 0.0f));
+			}
+			if (glfwGetKey(m_Window, GLFW_KEY_E))
+			{
+				light->Move(glm::vec3(0.1, 0.0f, 0.0f));
+			}
+
+			if (glfwGetKey(m_Window, GLFW_KEY_A))
+			{
+				m_Camera->MoveX(1.0f);
+			}
+			if (glfwGetKey(m_Window, GLFW_KEY_D))
+			{
+				m_Camera->MoveX(-1.0f);
+			}
+			if (glfwGetKey(m_Window, GLFW_KEY_W))
+			{
+				m_Camera->MoveZ(1.0f);
+			}
+			if (glfwGetKey(m_Window, GLFW_KEY_S))
+			{
+				m_Camera->MoveZ(-1.0f);
+			}
+
+
 			CalculateFrameTime();
 
-			m_shaderProgram->Bind();
-			m_shaderProgram->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
-			m_shaderProgram->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
+			m_DefaultShader->Bind();
+			m_DefaultShader->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
+			m_DefaultShader->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
 
-			m_shaderProgram->SetUniformVec3("u_ViewPos", m_Camera->GetPosition());
-			m_shaderProgram->SetUniformVec3("u_LightPositon", glm::vec3(3.0f, 0.0f, 0.0f));
+			m_DefaultShader->SetUniformVec3("u_ViewPos", m_Camera->GetPosition());
+			m_DefaultShader->SetUniformVec3("u_LightPositon", light->GetPosition());
 			m_Camera->Update(m_DeltaTime);
 
 			lampShader->Bind();
 			lampShader->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
 			lampShader->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
 
-			model->Render(m_shaderProgram.get());
+			model->Render(m_DefaultShader.get());
 			light->Render(lampShader);
-
+			model->Rotate(glm::vec3(0.0f, 1.0f * m_DeltaTime, 0.0f));
 			//RenderModels();
 
 			glfwSwapBuffers(m_Window);
@@ -196,7 +223,7 @@ namespace glcore {
 	{
 		for (auto& model : m_Models)
 		{
-			model->Render(m_shaderProgram.get());
+			model->Render(m_DefaultShader.get());
 		}
 	}
 
@@ -298,32 +325,6 @@ namespace glcore {
 
 	void GLApplication::OnKeyInput(int key, int scancode, int action, int mods)
 	{
-		switch (key)
-		{
-			case GLFW_KEY_W:
-			{
-				m_Camera->MoveZ(1.0f);
-				break;
-			}
-
-			case GLFW_KEY_S:
-			{
-				m_Camera->MoveZ(-1.0f);
-				break;
-			}
-
-			case GLFW_KEY_A:
-			{
-				m_Camera->MoveX(1.0f);
-				break;
-			}
-
-			case GLFW_KEY_D:
-			{
-				m_Camera->MoveX(-1.0f);
-				break;
-			}
-		}
 
 	}
 
