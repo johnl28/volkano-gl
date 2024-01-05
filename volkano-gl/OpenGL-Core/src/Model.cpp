@@ -72,7 +72,6 @@ namespace glcore {
 
 		std::vector<Vertex> vertices;
 
-
 		for (unsigned int i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			Vertex vertex;
@@ -94,6 +93,10 @@ namespace glcore {
 			if (aiMesh->HasNormals())
 			{
 				vertex.normals = glm::vec3(aiMesh->mNormals[i].x, aiMesh->mNormals[i].y, aiMesh->mNormals[i].z);
+			}
+			else
+			{
+				vertex.normals = glm::vec3(0.0f);
 			}
 
 			vertices.push_back(vertex);
