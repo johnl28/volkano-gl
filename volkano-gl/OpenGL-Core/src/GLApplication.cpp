@@ -25,12 +25,15 @@ namespace glcore {
 
 		InitGLFW();
 		InitInputEvents();
+		InitUI();
 		InitCamera();
 		InitDefaultShaderProgram();
 	}
 
 	GLApplication::~GLApplication()
 	{
+		m_UI->Destroy();
+
 		glfwDestroyWindow(m_Window);
 		glfwTerminate();
 	}
@@ -51,6 +54,7 @@ namespace glcore {
 
 
 		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
+
 		if (m_Window == nullptr)
 		{
 			GLCORE_ERR("[GLApplication] Failed to create window");
@@ -60,6 +64,7 @@ namespace glcore {
 
 
 		glfwMakeContextCurrent(m_Window);
+		glfwSwapInterval(1);
 		glfwSetWindowUserPointer(m_Window, this);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -99,6 +104,12 @@ namespace glcore {
 		m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f), projection);
 
 		GLCORE_INFO("[GLApplication] Camera initiliased");
+	}
+
+	void GLApplication::InitUI()
+	{
+		m_UI = std::make_unique<UI>();
+		m_UI->Initialise(m_Window);
 	}
 
 	void GLApplication::InitInputEvents()
@@ -166,33 +177,9 @@ namespace glcore {
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			if (glfwGetKey(m_Window, GLFW_KEY_Q))
-			{
-				light->Move(glm::vec3(-0.1, 0.0f, 0.0f));
-			}
-			if (glfwGetKey(m_Window, GLFW_KEY_E))
-			{
-				light->Move(glm::vec3(0.1, 0.0f, 0.0f));
-			}
-
-			if (glfwGetKey(m_Window, GLFW_KEY_A))
-			{
-				m_Camera->MoveX(1.0f);
-			}
-			if (glfwGetKey(m_Window, GLFW_KEY_D))
-			{
-				m_Camera->MoveX(-1.0f);
-			}
-			if (glfwGetKey(m_Window, GLFW_KEY_W))
-			{
-				m_Camera->MoveZ(1.0f);
-			}
-			if (glfwGetKey(m_Window, GLFW_KEY_S))
-			{
-				m_Camera->MoveZ(-1.0f);
-			}
-
-
+			m_UI->NewFrame();
+			
+			UpdateCamera();
 			CalculateFrameTime();
 
 			m_DefaultShader->Bind();
@@ -210,7 +197,10 @@ namespace glcore {
 			model->Render(m_DefaultShader.get());
 			light->Render(lampShader);
 			model->Rotate(glm::vec3(0.0f, 1.0f * m_DeltaTime, 0.0f));
-			//RenderModels();
+
+
+			m_UI->OnUI();
+			m_UI->Render();
 
 			glfwSwapBuffers(m_Window);
 
@@ -236,6 +226,25 @@ namespace glcore {
 		lastFrameTime = currentFrameTime;
 	}
 
+	void GLApplication::UpdateCamera()
+	{
+		if (glfwGetKey(m_Window, GLFW_KEY_A))
+		{
+			m_Camera->MoveX(1.0f);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_D))
+		{
+			m_Camera->MoveX(-1.0f);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_W))
+		{
+			m_Camera->MoveZ(1.0f);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_S))
+		{
+			m_Camera->MoveZ(-1.0f);
+		}
+	}
 
 	Model* GLApplication::LoadModel(const std::string& modelPath)
 	{

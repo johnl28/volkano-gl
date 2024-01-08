@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
 
+#include "UI.h"
 #include "Camera.h"
 #include "Model.h"
 #include "Core/ShaderProgram.h"
@@ -47,11 +48,13 @@ namespace glcore
 	private:
 		void InitGLFW();
 		void InitCamera();
+		void InitUI();
 		void InitInputEvents();
 		void InitDefaultShaderProgram();
 
 		void RenderModels();
 		void CalculateFrameTime();
+		void UpdateCamera();
 
 	private:
 		int m_Width = 0;
@@ -63,6 +66,7 @@ namespace glcore
 
 		GLFWwindow* m_Window = nullptr;
 
+		std::unique_ptr<UI> m_UI = nullptr;
 		std::unique_ptr<Camera> m_Camera = nullptr;
 
 		std::vector<std::unique_ptr<Model>> m_Models;

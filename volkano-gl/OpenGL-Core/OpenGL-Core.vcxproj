@@ -165,6 +165,13 @@
   <ItemGroup>
     <ClCompile Include="..\dependencies\c\glad.c" />
     <ClCompile Include="..\dependencies\c\stb_image.cpp" />
+    <ClCompile Include="..\dependencies\include\imgui\imgui.cpp" />
+    <ClCompile Include="..\dependencies\include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\dependencies\include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\dependencies\include\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\dependencies\include\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\dependencies\include\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\dependencies\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Camera.cpp" />
@@ -178,6 +185,7 @@
     <ClCompile Include="src\Core\VertexBuffer.cpp" />
     <ClCompile Include="src\Core\VertexArray.cpp" />
     <ClCompile Include="src\Core\Texture.cpp" />
+    <ClCompile Include="src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Light.h" />
@@ -194,6 +202,7 @@
     <ClInclude Include="src\Core\VertexBuffer.h" />
     <ClInclude Include="src\Core\VertexArray.h" />
     <ClInclude Include="src\Core\Texture.h" />
+    <ClInclude Include="src\UI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
