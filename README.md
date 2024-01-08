@@ -58,4 +58,5 @@ Project Dependencies:
 - [ASSIMP](https://github.com/assimp/assimp)
 - [stb](https://github.com/nothings/stb)
 - [Glad](https://glad.dav1d.de/)
+- [ImGui](https://github.com/ocornut/imgui)
 
