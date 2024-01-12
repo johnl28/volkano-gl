@@ -49,12 +49,15 @@ namespace glcore {
 			filePath.c_str(), aiScene->mNumMeshes, aiScene->mNumTextures, aiScene->mNumMaterials);
 
 
+		// Load each mesh and their material
 		for (unsigned int i = 0; i < aiScene->mNumMeshes; i++)
 		{
 			auto mesh = aiScene->mMeshes[i];
 			auto material = aiScene->mMaterials[mesh->mMaterialIndex];
 
 			LoadAiMeshData(mesh, material);
+		
+			aiScene->mRootNode->mTransformation
 		}
 
 		m_Loaded = true;
@@ -69,6 +72,7 @@ namespace glcore {
 			GLCORE_ERR("[Model] Cannot add ASSIMP mesh, null pointer provided.");
 			return;
 		}
+
 
 		std::vector<Vertex> vertices;
 
@@ -114,7 +118,18 @@ namespace glcore {
 			}
 		}
 
+
+		aiString path;
+		path.Append("assets/");
+		aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+		GLCORE_INFO("TEST count %s", path.C_Str());
+
+		std::string sPath;
+		sPath.append("assets/");
+		sPath.append(path.C_Str());
+
 		auto myMesh = new Mesh(vertices.data(), sizeof(Vertex) * vertices.size(), indices.data(), indices.size());
+		myMesh->LoadTexture(sPath);
 		m_Meshes.push_back(std::unique_ptr<Mesh>(myMesh));
 
 		GLCORE_INFO("[Model] [Mesh] Successfull loaded mesh %s. Faces: %d, Vertices: %d, Has Normals: %d", 
