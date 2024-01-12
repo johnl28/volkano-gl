@@ -179,7 +179,7 @@ namespace glcore {
 
 			m_UI->NewFrame();
 			
-			UpdateCamera();
+			UpdateCameraPosition();
 			CalculateFrameTime();
 
 			m_DefaultShader->Bind();
@@ -226,7 +226,12 @@ namespace glcore {
 		lastFrameTime = currentFrameTime;
 	}
 
-	void GLApplication::UpdateCamera()
+	void GLApplication::OnCursorMove(double xpos, double ypos)
+	{
+		UpdateCameraRotation(xpos, ypos);
+	}
+
+	void GLApplication::UpdateCameraPosition()
 	{
 		if (glfwGetKey(m_Window, GLFW_KEY_A))
 		{
@@ -243,6 +248,38 @@ namespace glcore {
 		if (glfwGetKey(m_Window, GLFW_KEY_S))
 		{
 			m_Camera->MoveZ(-1.0f);
+		}
+	}
+
+
+	void GLApplication::UpdateCameraRotation(double xpos, double ypos)
+	{
+		// imediate mode camera look
+		static bool firstMouse = true;
+		static float lastX = 0, lastY = 0;
+		if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		{
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+			if (firstMouse)
+			{
+				lastX = xpos;
+				lastY = ypos;
+				firstMouse = false;
+			}
+
+			float xoffset = xpos - lastX;
+			float yoffset = lastY - ypos;
+			lastX = xpos;
+			lastY = ypos;
+
+			m_Camera->Yaw(xoffset);
+			m_Camera->Pitch(yoffset);
+		}
+		else if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+		{
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			firstMouse = true;
 		}
 	}
 
@@ -301,36 +338,6 @@ namespace glcore {
 
 	}
 
-	void GLApplication::OnCursorMove(double xpos, double ypos)
-	{
-		// imediate mode camera look
-		static bool firstMouse = true;
-		static float lastX = 0, lastY = 0;
-		if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-		{
-			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-			if (firstMouse)
-			{
-				lastX = xpos;
-				lastY = ypos;
-				firstMouse = false;
-			}
-
-			float xoffset = xpos - lastX;
-			float yoffset = lastY - ypos;
-			lastX = xpos;
-			lastY = ypos;
-
-			m_Camera->Yaw(xoffset);
-			m_Camera->Pitch(yoffset);
-		}
-		else if(glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
-		{
-			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			firstMouse = true;
-		}
-	}
 
 	void GLApplication::OnKeyInput(int key, int scancode, int action, int mods)
 	{

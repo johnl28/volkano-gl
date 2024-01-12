@@ -54,7 +54,11 @@ namespace glcore
 
 		void RenderModels();
 		void CalculateFrameTime();
-		void UpdateCamera();
+
+		// Camera
+		void UpdateCameraPosition();
+		void UpdateCameraRotation(double xpos, double ypos);
+		
 
 	private:
 		int m_Width = 0;
