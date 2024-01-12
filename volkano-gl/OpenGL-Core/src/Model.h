@@ -20,7 +20,7 @@ namespace glcore {
 		
 		bool IsLoaded() const { return m_Loaded; }
 
-
+		const std::vector<std::unique_ptr<Mesh>> &GetMeshes() const { return m_Meshes; }
 
 		// Transform
 		void Move(const glm::vec3& velocity);
