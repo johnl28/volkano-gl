@@ -30,7 +30,7 @@ namespace glcore
 
 		void Run();
 
-		bool IsContextInitialised() const { return m_ctxInitialised; }
+		bool IsContextInitialised() const { return m_CtxInitialised; }
 
 		Model* LoadModel(const std::string& modelPath);
 		void AddModel(Model *model);
@@ -63,10 +63,11 @@ namespace glcore
 	private:
 		int m_Width = 0;
 		int m_Height = 0;
+		std::string m_Title = "";
+
+		bool m_CtxInitialised = false;
 
 		double m_DeltaTime = 0.0f;
-		bool m_ctxInitialised = false;
-		std::string m_Title = "";
 
 		GLFWwindow* m_Window = nullptr;
 
@@ -75,8 +76,8 @@ namespace glcore
 
 		std::vector<std::unique_ptr<Model>> m_Models;
 
-		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;
 		std::unique_ptr<ShaderProgram> m_DefaultShader = nullptr;
+		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;
 	};
 
 }

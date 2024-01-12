@@ -21,12 +21,12 @@ namespace glcore {
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		//ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+		ImGuiIO& io = ImGui::GetIO(); 
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
 		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsLight();
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 130");

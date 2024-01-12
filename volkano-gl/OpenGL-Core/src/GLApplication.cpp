@@ -66,7 +66,6 @@ namespace glcore {
 		glfwMakeContextCurrent(m_Window);
 		glfwSwapInterval(1);
 		glfwSetWindowUserPointer(m_Window, this);
-
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			GLCORE_ERR("[GLApplication] Failed to initialize GLAD");
@@ -75,18 +74,19 @@ namespace glcore {
 
 		glViewport(0, 0, m_Width, m_Height);
 		glEnable(GL_DEPTH_TEST);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		auto version = glGetString(GL_VERSION);
 		GLCORE_INFO("%s", (char*)version);
 
 		GLCORE_INFO("[GLApplication] GLFW Initialised");
 
-		m_ctxInitialised = true;
+		m_CtxInitialised = true;
 	}
 
 	void GLApplication::InitCamera()
 	{
-		if (!m_ctxInitialised)
+		if (!m_CtxInitialised)
 		{
 			return;
 		}
@@ -114,7 +114,7 @@ namespace glcore {
 
 	void GLApplication::InitInputEvents()
 	{
-		if (!m_ctxInitialised)
+		if (!m_CtxInitialised)
 		{
 			return;
 		}
@@ -126,7 +126,7 @@ namespace glcore {
 
 	void GLApplication::InitDefaultShaderProgram()
 	{
-		if (!m_ctxInitialised)
+		if (!m_CtxInitialised)
 		{
 			return;
 		}
@@ -144,7 +144,7 @@ namespace glcore {
 
 	void GLApplication::Run()
 	{
-		if (!m_ctxInitialised)
+		if (!m_CtxInitialised)
 		{
 			GLCORE_ERR("[GLApplication] Application loop cannot run if initialisation failed.");
 			return;
@@ -157,12 +157,12 @@ namespace glcore {
 		Texture texture("assets/textures/GreyboxTextures/greybox_light_grid.png");
 		texture.Bind(0);
 
-		auto model = LoadModel("assets/models/shapes/sphere.fbx");
-		model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
-		//model->Scale(glm::vec3(0.3f));
+		auto model = LoadModel("assets/models/volcano.fbx");
+		//model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
+		model->Scale(glm::vec3(0.03f));
 
 		auto light = LoadModel("assets/models/shapes/sphere.fbx");
-		light->Move(glm::vec3(3.0f, 0.0f, 0.0f));
+		light->Move(glm::vec3(30.0f, 10.0f, 0.0f));
 		light->Scale(glm::vec3(0.3f));
 
 		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
@@ -178,7 +178,8 @@ namespace glcore {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			m_UI->NewFrame();
-			
+
+			glfwPollEvents();
 			UpdateCameraPosition();
 			CalculateFrameTime();
 
@@ -203,8 +204,6 @@ namespace glcore {
 			m_UI->Render();
 
 			glfwSwapBuffers(m_Window);
-
-			glfwPollEvents();
 		}
 
 	}
@@ -257,6 +256,7 @@ namespace glcore {
 		// imediate mode camera look
 		static bool firstMouse = true;
 		static float lastX = 0, lastY = 0;
+
 		if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 		{
 			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
