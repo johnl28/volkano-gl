@@ -13,8 +13,6 @@ namespace glcore {
 		Shader(const std::string& file, GLenum shaderType);
 		~Shader();
 
-
-
 		void Compile();
 
 
