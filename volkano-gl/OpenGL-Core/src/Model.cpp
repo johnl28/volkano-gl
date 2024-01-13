@@ -31,7 +31,11 @@ namespace glcore {
 	{
 		Assimp::Importer importer;
 
-		const auto aiScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
+		// aiProcess_PreTransformVertices is provisionally
+		// The mesh vertex position is pre-transformed based on the node's transformation matrix
+		// That makes a mesh unusable individually
+
+		const auto aiScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_PreTransformVertices);
 
 		if (!aiScene || aiScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !aiScene->mRootNode)
 		{
@@ -45,25 +49,35 @@ namespace glcore {
 		}
 
 
-		GLCORE_INFO("[Model] Successfull loaded %s. Meshes: %d, Textures: %d, Materials: %d", 
-			filePath.c_str(), aiScene->mNumMeshes, aiScene->mNumTextures, aiScene->mNumMaterials);
+		GLCORE_INFO("[Model] Successfull loaded %s. Meshes: %d, Textures: %d, Materials: %d, Lights: %d, Cameras: %d", 
+			filePath.c_str(), aiScene->mNumMeshes, aiScene->mNumTextures, aiScene->mNumMaterials, aiScene->mNumLights, aiScene->mNumCameras);
 
-
-		// Load each mesh and their material
-		for (unsigned int i = 0; i < aiScene->mNumMeshes; i++)
-		{
-			auto mesh = aiScene->mMeshes[i];
-			auto material = aiScene->mMaterials[mesh->mMaterialIndex];
-
-			LoadAiMeshData(mesh, material);
-		
-			aiScene->mRootNode->mTransformation
-		}
+		LoadAiNode(aiScene, aiScene->mRootNode);
 
 		m_Loaded = true;
 		return true;
 	}
 
+
+	void Model::LoadAiNode(const aiScene* scene, const aiNode* node)
+	{
+
+		// Load Meshes within the node
+		for (auto i = 0; i < node->mNumMeshes; ++i)
+		{
+			auto meshData = scene->mMeshes[node->mMeshes[i]];
+
+			LoadAiMeshData(meshData, scene->mMaterials[meshData->mMaterialIndex]);
+		}
+
+		// Load the child nodes
+		for (auto x = 0; x < node->mNumChildren; ++x)
+		{
+			LoadAiNode(scene, node->mChildren[x]);
+		}
+
+		GLCORE_INFO("[Model] [Node] Successfull loaded Node %s.", node->mName.C_Str());
+	}
 
 	void Model::LoadAiMeshData(const aiMesh* aiMesh, const aiMaterial* aiMaterial)
 	{
@@ -120,8 +134,8 @@ namespace glcore {
 
 
 		aiString path;
-		path.Append("assets/");
-		aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+		//aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+		aiMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &path);
 		GLCORE_INFO("TEST count %s", path.C_Str());
 
 		std::string sPath;

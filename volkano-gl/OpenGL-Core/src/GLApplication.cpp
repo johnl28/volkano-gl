@@ -157,13 +157,13 @@ namespace glcore {
 		Texture texture("assets/textures/GreyboxTextures/greybox_light_grid.png");
 		texture.Bind(0);
 
-		auto model = LoadModel("assets/models/volcano.fbx");
+		auto model = LoadModel("assets/models/uploads_files_3596551_lowpoly-volcano.fbx");
 		//model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
 		model->Scale(glm::vec3(0.03f));
 
 		auto light = LoadModel("assets/models/shapes/sphere.fbx");
 		light->Move(glm::vec3(30.0f, 10.0f, 0.0f));
-		light->Scale(glm::vec3(0.3f));
+		light->Scale(glm::vec3(0.03f));
 
 		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);

@@ -36,6 +36,7 @@ namespace glcore {
 		const glm::vec3& GetScale() { return m_Scale; }
 
 	private:
+		void LoadAiNode(const aiScene* scene, const aiNode* node);
 		void LoadAiMeshData(const aiMesh *aiMesh, const aiMaterial *aiMaterial);
 
 		void UpdateMeshPosition();
