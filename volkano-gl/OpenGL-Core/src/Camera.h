@@ -35,6 +35,10 @@ namespace glcore {
 		void Yaw(float offset);
 		void Pitch(float offset);
 
+		// Speed
+		float GetSpeed() { return m_CameraSpeed; }
+		void SetSpeed(float speed) { m_CameraSpeed = speed;  }
+
 
 		// Matrix
 		const glm::mat4& GetViewMatrix();
