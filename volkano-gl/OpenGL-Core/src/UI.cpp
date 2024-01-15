@@ -4,6 +4,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+
+
 namespace glcore {
 
 	UI::UI()
@@ -45,28 +47,31 @@ namespace glcore {
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
-	void UI::OnUI()
-	{
-		{
-			static float f = 0.0f;
-			static int counter = 0;
-
-			ImGui::Begin("Hello, world!");
-
-			ImGui::Text("This is some useful text.");
-
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-
-			if (ImGui::Button("Button"))
-				counter++;
-
-			ImGui::SameLine();
-			ImGui::Text("counter = %d", counter);
-
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::End();
-		}
-	}
+	//void UI::OnUI(Camera* camera, Light* light)
+	//{
+	//
+	//	static float cameraSpeed = camera->GetSpeed();
+	//	static int counter = 0;
+	//
+	//	ImGui::Begin("Hello, world!");
+	//
+	//	ImGui::Text("This is some useful text.");
+	//
+	//	if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.0f, 1.0f))
+	//	{
+	//		camera->SetSpeed(cameraSpeed);
+	//	}
+	//
+	//	if (ImGui::Button("Button"))
+	//		counter++;
+	//
+	//	ImGui::SameLine();
+	//	ImGui::Text("counter = %d", counter);
+	//
+	//	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	//	ImGui::End();
+	//
+	//}
 
 }
 
