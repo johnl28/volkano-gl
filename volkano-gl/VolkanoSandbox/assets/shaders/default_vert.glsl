@@ -19,6 +19,9 @@ void main()
 	FragTextureCoord = aTextureCoord;
 
 	FragPos = vec3(u_Transform * vec4(aPos, 1.0));
+
+	// todo: Expensive computation, maybe move it on the CPU side
+	// Book Reference: https://learnopengl.com/Lighting/Basic-Lighting
 	FragNormals = mat3(transpose(inverse(u_Transform))) * aNormals;;
 }
 
