@@ -133,16 +133,18 @@ namespace glcore {
 		}
 
 
-		aiString path;
-		//aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-		aiMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &path);
-
-		std::string sPath;
-		sPath.append("assets/");
-		sPath.append(path.C_Str());
-
 		auto myMesh = new Mesh(vertices.data(), sizeof(Vertex) * vertices.size(), indices.data(), indices.size());
-		myMesh->LoadTexture(sPath);
+
+		aiString texturePath;
+		aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
+		if (texturePath.length)
+		{
+			std::string fullPath("assets/textures/");
+			fullPath.append(texturePath.C_Str());
+
+			myMesh->LoadTexture(fullPath);
+		}
+
 		m_Meshes.push_back(std::unique_ptr<Mesh>(myMesh));
 
 		GLCORE_INFO("[Model] [Mesh] Successfull loaded mesh %s. Faces: %d, Vertices: %d, Has Normals: %d", 
