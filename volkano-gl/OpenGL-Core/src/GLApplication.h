@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Light.h"
+#include "Skybox.h"
 #include "Core/ShaderProgram.h"
 
 
@@ -18,7 +19,7 @@ namespace glcore
 	void GlScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void GlCursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 	void GlKeyInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
+	void GlWindowResizeCallBack(GLFWwindow* window, int width, int height);
 
 	class GLApplication
 	{
@@ -52,6 +53,7 @@ namespace glcore
 		void InitUI();
 		void InitInputEvents();
 		void InitDefaultShaders();
+		void InitSkybox();
 
 		void CalculateFrameTime();
 
@@ -80,10 +82,12 @@ namespace glcore
 		std::unique_ptr<Camera> m_Camera = nullptr;
 
 		std::vector<std::unique_ptr<Model>> m_Models;
-
+		
+		glm::vec3 m_ClearColor = glm::vec3(0.0f);
 		float m_AmbientLight = 0.3f;
 		float m_SpecularStrength = 0.1f;
 
+		std::unique_ptr<Skybox> m_Skybox = nullptr;
 		std::unique_ptr<Light> m_DirectionalLight = nullptr;
 		std::unique_ptr<ShaderProgram> m_DefaultShader = nullptr;
 		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;

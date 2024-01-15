@@ -7,11 +7,12 @@
 #include "Renderer.h"
 #include "Log.h"
 #include "GLApplication.h"
+#include "Skybox.h"
 
 #include "Model.h"
 #include "Core/Texture.h"
 #include "Core/ShaderProgram.h"
-
+#include "Core/CubeMap.h"
 
 namespace glcore {
 
@@ -32,6 +33,7 @@ namespace glcore {
 		InitCamera();
 		InitDefaultShaders();
 		InitDirectionalLight();
+		InitSkybox();
 	}
 
 	GLApplication::~GLApplication()
@@ -78,7 +80,7 @@ namespace glcore {
 
 		glViewport(0, 0, m_Width, m_Height);
 		glEnable(GL_DEPTH_TEST);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
 		auto version = glGetString(GL_VERSION);
 		GLCORE_INFO("%s", (char*)version);
@@ -126,6 +128,7 @@ namespace glcore {
 		glfwSetKeyCallback(m_Window, GlKeyInputCallback);
 		glfwSetScrollCallback(m_Window, GlScrollCallback);
 		glfwSetCursorPosCallback(m_Window, GlCursorPosCallback);
+		glfwSetWindowSizeCallback(m_Window, GlWindowResizeCallBack);
 	}
 
 	void GLApplication::InitDefaultShaders()
@@ -152,6 +155,43 @@ namespace glcore {
 		GLCORE_INFO("[GLApplication] Default shaders initialised");
 	}
 
+	void GLApplication::InitSkybox()
+	{
+		std::vector<std::string> textures = { 
+			"assets/textures/skybox/right.jpg",
+			"assets/textures/skybox/left.jpg",
+			"assets/textures/skybox/top.jpg",
+			"assets/textures/skybox/bottom.jpg",
+			"assets/textures/skybox/front.jpg",
+			"assets/textures/skybox/back.jpg" 
+		};
+
+		auto cubeMap = new CubeMap(textures);
+		if (!cubeMap->IsLoaded())
+		{
+			GLCORE_ERR("[Application] Failed to load skybox textures.");
+			abort();
+		}
+
+		auto shader = LoadShaders("skybox", "assets/shaders/skybox_vert.glsl", "assets/shaders/skybox_frag.glsl");
+		if (!shader->IsLinked())
+		{
+			GLCORE_ERR("[Application] Failed to load skybox shaders.");
+			abort();
+		}
+
+		auto model = new Model();
+		model->Load("assets/models/shapes/cube.fbx");
+		if (!model->IsLoaded())
+		{
+			GLCORE_ERR("[Application] Failed to load skybox model.");
+			abort();
+		}
+
+		auto skybox = new Skybox(model, cubeMap, shader);
+		m_Skybox = std::unique_ptr<Skybox>(skybox);
+	}
+
 
 	void GLApplication::Run()
 	{
@@ -164,8 +204,7 @@ namespace glcore {
 		m_DeltaTime = glfwGetTime();
 		
 
-		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
-		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
+		glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
 
 		auto texture = Texture("assets/textures/GreyboxTextures/greybox_grey_grid.png");
 		texture.Bind();
@@ -185,6 +224,7 @@ namespace glcore {
 
 			UpdateCameraPosition();
 
+
 			for (auto &model : m_Models)
 			{
 				auto shader = model->GetShader() ? model->GetShader() : modelShader;
@@ -192,6 +232,7 @@ namespace glcore {
 			}
 
 			m_Camera->Update(m_DeltaTime);
+			renderer.RenderSkybox(m_Skybox.get(), m_Camera.get());
 
 			//m_UI->OnUI(m_Camera.get(), m_DirectionalLight.get());
 			OnUISettings();
@@ -210,6 +251,7 @@ namespace glcore {
 		static auto cameraSpeed = m_Camera->GetSpeed();
 		static auto lightColor = m_DirectionalLight->GetColor();
 		static auto lightPos = m_DirectionalLight->GetPosition();
+		static bool drawLines = false;
 
 		ImGui::Begin("General Settings");
 
@@ -217,30 +259,33 @@ namespace glcore {
 		ImGui::Text("Right Click for camera look.");
 		ImGui::NewLine();
 
-		ImGui::BeginGroup();
+		// General
+		ImGui::Text("General");
+		if (ImGui::ColorEdit3("Clear Color", &m_ClearColor[0]))
+		{
+			glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
+		}
+
+		if (ImGui::Checkbox("Draw Triangles", &drawLines))
+		{
+			auto flag = drawLines ? GL_LINE : GL_FILL;
+			glPolygonMode(GL_FRONT_AND_BACK, flag);
+		}
+
+		// Camera Options
+		ImGui::NewLine();
 		ImGui::Text("Camera");
-		if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.0f, 1.0f))
+		if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.001f, 5.0f))
 		{
 			m_Camera->SetSpeed(cameraSpeed);
 		}
-		ImGui::EndGroup();
 
+		// Light Options
+		ImGui::NewLine();
 		ImGui::Text("Light");
 		if (ImGui::ColorEdit3("Light Color", &lightColor[0]))
 		{
 			m_DirectionalLight->SetColor(lightColor);
-		}
-
-		if (ImGui::SliderFloat("Ambient Light Strength", &m_AmbientLight, 0.0f, 1.0f))
-		{
-			auto shader = GetShader("modelShader");
-			shader->SetUniform1f("u_AmbientLight", m_AmbientLight);
-		}
-
-		if (ImGui::SliderFloat("Specular Strength", &m_SpecularStrength, 0.0f, 10.0f))
-		{
-			auto shader = GetShader("modelShader");
-			shader->SetUniform1f("u_SpecularStrength", m_SpecularStrength);
 		}
 
 		if (ImGui::DragFloat3("Light Position", &lightPos[0]))
@@ -248,6 +293,23 @@ namespace glcore {
 			m_DirectionalLight->SetPosition(lightPos);
 		}
 
+		if (ImGui::SliderFloat("Ambient Light Strength", &m_AmbientLight, 0.0f, 1.0f))
+		{
+			auto shader = GetShader("modelShader");
+			shader->Bind();
+			shader->SetUniform1f("u_AmbientLight", m_AmbientLight);
+		}
+
+		if (ImGui::SliderFloat("Specular Strength", &m_SpecularStrength, 0.0f, 10.0f))
+		{
+			auto shader = GetShader("modelShader");
+			shader->Bind();
+			shader->SetUniform1f("u_SpecularStrength", m_SpecularStrength);
+		}
+
+
+		// Info text
+		ImGui::NewLine();
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
@@ -326,7 +388,7 @@ namespace glcore {
 
 		if (model)
 		{
-			model->Scale(glm::vec3(0.003f));
+			model->Scale(glm::vec3(0.005f));
 			model->SetShader(GetShader("lampShader"));
 
 			light->SetModel(model);
@@ -438,6 +500,18 @@ namespace glcore {
 		}
 
 		glApp->OnKeyInput(key, scancode, action, mods);
+	}
+
+	void GlWindowResizeCallBack(GLFWwindow* window, int width, int height)
+	{
+		static auto glApp = static_cast<GLApplication*>(glfwGetWindowUserPointer(window));
+		if (!glApp)
+		{
+			GLCORE_ERR("[GlCursorPosCallback] Window app pointer null.");
+			return;
+		}
+
+		glViewport(0, 0, width, height);
 	}
 
 }
