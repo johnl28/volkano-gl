@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/ShaderProgram.h"
 #include "Camera.h"
+#include "Light.h"
 #include "Model.h"
 
 namespace glcore {
@@ -19,10 +20,11 @@ namespace glcore {
 			return instance;
 		}
 
-		void RenderModel(Model* model, Camera* camera, ShaderProgram* shader);
+		void RenderModel(Model* model, Camera* camera, ShaderProgram* shader, Light* light);
+		void RenderLight(Light* light, Camera* camera, ShaderProgram* shader);
 
 	private:
-		Renderer();
+		Renderer() {};
 
 	};
 
