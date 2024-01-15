@@ -2,6 +2,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/glm.hpp"
 
+#include "imgui/imgui.h"
+
+#include "Renderer.h"
 #include "Log.h"
 #include "GLApplication.h"
 
@@ -27,7 +30,8 @@ namespace glcore {
 		InitInputEvents();
 		InitUI();
 		InitCamera();
-		InitDefaultShaderProgram();
+		InitDefaultShaders();
+		InitDirectionalLight();
 	}
 
 	GLApplication::~GLApplication()
@@ -101,7 +105,7 @@ namespace glcore {
 			1000.0f
 		};
 
-		m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f), projection);
+		m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 20.0f, 10.0f), projection);
 
 		GLCORE_INFO("[GLApplication] Camera initiliased");
 	}
@@ -124,21 +128,28 @@ namespace glcore {
 		glfwSetCursorPosCallback(m_Window, GlCursorPosCallback);
 	}
 
-	void GLApplication::InitDefaultShaderProgram()
+	void GLApplication::InitDefaultShaders()
 	{
 		if (!m_CtxInitialised)
 		{
 			return;
 		}
 
-		m_DefaultShader = std::make_unique<ShaderProgram>();
-		m_DefaultShader->LoadShaders("assets/shaders/default_vert.glsl", "assets/shaders/default_frag.glsl");
-		if (!m_DefaultShader->IsLinked())
+		auto modelShader = LoadShaders("modelShader", "assets/shaders/default_vert.glsl", "assets/shaders/default_frag.glsl");
+		auto lampShader = LoadShaders("lampShader", "assets/shaders/lamp_vert.glsl", "assets/shaders/lamp_frag.glsl");
+
+		if (!lampShader->IsLinked() || !modelShader->IsLinked())
 		{
+			GLCORE_ERR("[Application] Failed to load default shaders.");
+			abort();
 			return;
 		}
 
-		GLCORE_INFO("[GLApplication] Default shader program initialised");
+		modelShader->Bind();
+		modelShader->SetUniform1f("u_AmbientLight", m_AmbientLight);
+		modelShader->SetUniform1f("u_SpecularStrength", m_SpecularStrength);
+
+		GLCORE_INFO("[GLApplication] Default shaders initialised");
 	}
 
 
@@ -152,26 +163,16 @@ namespace glcore {
 
 		m_DeltaTime = glfwGetTime();
 		
-		auto lampShader = LoadShaders("lampShader", "assets/shaders/lamp_vert.glsl", "assets/shaders/lamp_frag.glsl");
-
-		Texture texture("assets/textures/GreyboxTextures/greybox_light_grid.png");
-		texture.Bind(0);
-
-		auto model = LoadModel("assets/models/uploads_files_3596551_lowpoly-volcano.fbx");
-		//model->Rotate(glm::vec3(-90.0f, 0.0f, 0.0f));
-		model->Scale(glm::vec3(0.03f));
-
-		auto light = LoadModel("assets/models/shapes/sphere.fbx");
-		light->Move(glm::vec3(30.0f, 10.0f, 0.0f));
-		light->Scale(glm::vec3(0.03f));
 
 		auto clearColor = glm::vec3(0, 104, 145) / 255.0f;
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
 
-		m_DefaultShader->Bind();
-		m_DefaultShader->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
-		lampShader->Bind();
-		lampShader->SetUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
+		auto texture = Texture("assets/textures/GreyboxTextures/greybox_grey_grid.png");
+		texture.Bind();
+
+		auto modelShader = GetShader("modelShader");
+		auto &renderer = Renderer::Get();
+
 
 		while (!glfwWindowShouldClose(m_Window))
 		{
@@ -180,27 +181,21 @@ namespace glcore {
 			m_UI->NewFrame();
 
 			glfwPollEvents();
-			UpdateCameraPosition();
 			CalculateFrameTime();
 
-			m_DefaultShader->Bind();
-			m_DefaultShader->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
-			m_DefaultShader->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
+			UpdateCameraPosition();
 
-			m_DefaultShader->SetUniformVec3("u_ViewPos", m_Camera->GetPosition());
-			m_DefaultShader->SetUniformVec3("u_LightPositon", light->GetPosition());
+			for (auto &model : m_Models)
+			{
+				auto shader = model->GetShader() ? model->GetShader() : modelShader;
+				renderer.RenderModel(model.get(), m_Camera.get(), shader, m_DirectionalLight.get());
+			}
+
 			m_Camera->Update(m_DeltaTime);
 
-			lampShader->Bind();
-			lampShader->SetUniformMatrix4fv("u_View", m_Camera->GetViewMatrix());
-			lampShader->SetUniformMatrix4fv("u_Projection", m_Camera->GetProjectionMatrix());
+			//m_UI->OnUI(m_Camera.get(), m_DirectionalLight.get());
+			OnUISettings();
 
-			model->Render(m_DefaultShader.get());
-			light->Render(lampShader);
-			model->Rotate(glm::vec3(0.0f, 1.0f * m_DeltaTime, 0.0f));
-
-
-			m_UI->OnUI();
 			m_UI->Render();
 
 			glfwSwapBuffers(m_Window);
@@ -208,12 +203,53 @@ namespace glcore {
 
 	}
 
-	void GLApplication::RenderModels()
+
+	void GLApplication::OnUISettings()
 	{
-		for (auto& model : m_Models)
+
+		static auto cameraSpeed = m_Camera->GetSpeed();
+		static auto lightColor = m_DirectionalLight->GetColor();
+		static auto lightPos = m_DirectionalLight->GetPosition();
+
+		ImGui::Begin("General Settings");
+
+		ImGui::Text("Use W,A,S,D to move around.");
+		ImGui::Text("Right Click for camera look.");
+		ImGui::NewLine();
+
+		ImGui::BeginGroup();
+		ImGui::Text("Camera");
+		if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.0f, 1.0f))
 		{
-			model->Render(m_DefaultShader.get());
+			m_Camera->SetSpeed(cameraSpeed);
 		}
+		ImGui::EndGroup();
+
+		ImGui::Text("Light");
+		if (ImGui::ColorEdit3("Light Color", &lightColor[0]))
+		{
+			m_DirectionalLight->SetColor(lightColor);
+		}
+
+		if (ImGui::SliderFloat("Ambient Light Strength", &m_AmbientLight, 0.0f, 1.0f))
+		{
+			auto shader = GetShader("modelShader");
+			shader->SetUniform1f("u_AmbientLight", m_AmbientLight);
+		}
+
+		if (ImGui::SliderFloat("Specular Strength", &m_SpecularStrength, 0.0f, 10.0f))
+		{
+			auto shader = GetShader("modelShader");
+			shader->SetUniform1f("u_SpecularStrength", m_SpecularStrength);
+		}
+
+		if (ImGui::DragFloat3("Light Position", &lightPos[0]))
+		{
+			m_DirectionalLight->SetPosition(lightPos);
+		}
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
 	}
 
 	void GLApplication::CalculateFrameTime()
@@ -283,6 +319,26 @@ namespace glcore {
 		}
 	}
 
+	void GLApplication::InitDirectionalLight()
+	{
+		auto light = new Light(glm::vec3(0.0f), glm::vec3(1.0f));
+		auto model = LoadModel("assets/models/shapes/sphere.fbx");
+
+		if (model)
+		{
+			model->Scale(glm::vec3(0.003f));
+			model->SetShader(GetShader("lampShader"));
+
+			light->SetModel(model);
+		}
+
+		//light->SetColor(glm::vec3(1.0f, 0, 0));
+		light->SetPosition(glm::vec3(1.0f, 20.0f, -70.0f));
+
+		m_DirectionalLight = std::unique_ptr<Light>(light);
+	}
+
+
 	Model* GLApplication::LoadModel(const std::string& modelPath)
 	{
 		auto model = new Model();
@@ -320,6 +376,8 @@ namespace glcore {
 		shader->LoadShaders(verShaderFile, fragShaderFile);
 		if (!shader->IsLinked())
 		{
+			assert(false);
+
 			delete shader;
 			return nullptr;
 		}

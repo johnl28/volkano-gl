@@ -9,6 +9,7 @@
 #include "UI.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Light.h"
 #include "Core/ShaderProgram.h"
 
 
@@ -50,14 +51,18 @@ namespace glcore
 		void InitCamera();
 		void InitUI();
 		void InitInputEvents();
-		void InitDefaultShaderProgram();
+		void InitDefaultShaders();
 
-		void RenderModels();
 		void CalculateFrameTime();
 
 		// Camera
 		void UpdateCameraPosition();
 		void UpdateCameraRotation(double xpos, double ypos);
+
+		// Light
+		void InitDirectionalLight();
+
+		void OnUISettings();
 		
 
 	private:
@@ -76,6 +81,10 @@ namespace glcore
 
 		std::vector<std::unique_ptr<Model>> m_Models;
 
+		float m_AmbientLight = 0.3f;
+		float m_SpecularStrength = 0.1f;
+
+		std::unique_ptr<Light> m_DirectionalLight = nullptr;
 		std::unique_ptr<ShaderProgram> m_DefaultShader = nullptr;
 		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;
 	};
