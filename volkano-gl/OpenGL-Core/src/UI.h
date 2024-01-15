@@ -1,6 +1,9 @@
 #pragma once
 #include "GLFW/glfw3.h"
 
+//#include "Camera.h"
+//#include "Light.h"
+
 namespace glcore {
 
 
@@ -13,7 +16,8 @@ namespace glcore {
 		void Initialise(GLFWwindow* window);
 		void NewFrame();
 		void Render();
-		void OnUI();
+
+		//void OnUI(Camera* camera, Light* light);
 	};
 
 
