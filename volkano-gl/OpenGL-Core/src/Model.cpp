@@ -136,7 +136,6 @@ namespace glcore {
 		aiString path;
 		//aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 		aiMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &path);
-		GLCORE_INFO("TEST count %s", path.C_Str());
 
 		std::string sPath;
 		sPath.append("assets/");
@@ -158,6 +157,12 @@ namespace glcore {
 		UpdateMeshPosition();
 	}
 
+	void Model::SetPosition(const glm::vec3& position)
+	{
+		m_Position = position;
+		UpdateMeshPosition();
+	}
+
 	void Model::UpdateMeshPosition()
 	{
 		for (auto& mesh : m_Meshes)
@@ -169,6 +174,12 @@ namespace glcore {
 	void Model::Rotate(const glm::vec3& deg)
 	{
 		m_Rotation += deg;
+		UpdateMeshRotation();
+	}
+
+	void Model::SetRotation(const glm::vec3& rotation)
+	{
+		m_Rotation = rotation;
 		UpdateMeshRotation();
 	}
 

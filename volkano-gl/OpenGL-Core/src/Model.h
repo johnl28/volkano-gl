@@ -12,6 +12,8 @@
 
 
 namespace glcore {
+
+
 	class Model
 	{
 	public:
@@ -21,6 +23,10 @@ namespace glcore {
 		bool IsLoaded() const { return m_Loaded; }
 
 		const std::vector<std::unique_ptr<Mesh>> &GetMeshes() const { return m_Meshes; }
+
+		ShaderProgram* GetShader() const { return m_Shader; }
+		void SetShader(ShaderProgram* shader) { m_Shader = shader; }
+
 
 		// Transform
 		void Move(const glm::vec3& velocity);
@@ -51,6 +57,7 @@ namespace glcore {
 		glm::vec3 m_Position = glm::vec3(0.0f);
 		glm::vec3 m_Rotation = glm::vec3(0.0f);
 
+		ShaderProgram* m_Shader = nullptr;
 		std::vector<std::unique_ptr<Mesh>> m_Meshes;
 	};
 }
