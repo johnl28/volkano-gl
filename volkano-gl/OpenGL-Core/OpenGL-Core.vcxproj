@@ -163,6 +163,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Skybox.cpp" />
+    <ClCompile Include="src\Core\CubeMap.cpp" />
     <ClCompile Include="dependencies\c\glad.c" />
     <ClCompile Include="dependencies\c\stb_image.cpp" />
     <ClCompile Include="dependencies\include\imgui\imgui.cpp" />
@@ -188,6 +190,8 @@
     <ClCompile Include="src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Skybox.h" />
+    <ClInclude Include="src\Core\CubeMap.h" />
     <ClInclude Include="dependencies\include\imgui\imconfig.h" />
     <ClInclude Include="dependencies\include\imgui\imgui.h" />
     <ClInclude Include="dependencies\include\imgui\imgui_impl_glfw.h" />
