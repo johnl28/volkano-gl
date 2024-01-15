@@ -18,6 +18,7 @@ int main()
 	volcano->Scale(glm::vec3(0.1f));
 	volcano->Move(glm::vec3(0, 0, -50.0f));
 
+
 	app.Run();
 
 	return EXIT_SUCCESS;
