@@ -28,6 +28,39 @@ namespace glcore {
 		}
 	}
 
+	void Renderer::RenderSkybox(Skybox* skybox, Camera* camera)
+	{
+		if (!skybox)
+		{
+			GLCORE_WARN("[Renderer] Cannot render skybox, Skybox: %d", skybox);
+			return;
+		}
+
+		glDepthFunc(GL_LEQUAL);
+		//glDepthMask(GL_FALSE);
+
+		glm::mat4 view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
+
+
+		auto shader = skybox->GetShader();
+		shader->Bind();
+		shader->SetUniformMatrix4fv("u_Projection", camera->GetProjectionMatrix());
+		shader->SetUniformMatrix4fv("u_View", view);
+		//shader->SetUniform1i("skybox", 0);
+
+		skybox->GetCubemap()->Bind();
+		auto model = skybox->GetModel();
+		for (auto& mesh : model->GetMeshes())
+		{
+			mesh->Bind();
+
+			glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+		}
+
+		glDepthFunc(GL_LESS);
+		//glDepthMask(GL_TRUE);
+	}
+
 	void Renderer::RenderLight(Light* light, Camera* camera, ShaderProgram* shader)
 	{
 		if (!light || !camera || !shader)
