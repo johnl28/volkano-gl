@@ -95,6 +95,11 @@ namespace glcore {
 		glUniform1i(GetUniformLocation(uniform), v0);
 	}
 
+	void ShaderProgram::SetUniform1f(const std::string& uniform, GLfloat v0)
+	{
+		glUniform1f(GetUniformLocation(uniform), v0);
+	}
+
 	void ShaderProgram::SetUniform4f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
 	{
 		glUniform4f(GetUniformLocation(uniform), v0, v1, v2, v3);

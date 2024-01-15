@@ -30,6 +30,7 @@ namespace glcore {
 		void SetUniformVec4(const std::string& uniform, const glm::vec4& val);
 
 		void SetUniform1i(const std::string& uniform, GLint v0);
+		void SetUniform1f(const std::string& uniform, GLfloat v0);
 		void SetUniform4f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
 		void SetUniform3f(const std::string& uniform, GLfloat v0, GLfloat v1, GLfloat v2);
 
