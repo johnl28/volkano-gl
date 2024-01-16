@@ -191,6 +191,7 @@
     <ClCompile Include="src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\GlRandom.h" />
     <ClInclude Include="src\ParticleSystem.h" />
     <ClInclude Include="src\Skybox.h" />
     <ClInclude Include="src\Core\CubeMap.h" />
