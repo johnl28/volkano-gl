@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\Skybox.cpp" />
     <ClCompile Include="src\Core\CubeMap.cpp" />
     <ClCompile Include="dependencies\c\glad.c" />
@@ -190,6 +191,7 @@
     <ClCompile Include="src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ParticleSystem.h" />
     <ClInclude Include="src\Skybox.h" />
     <ClInclude Include="src\Core\CubeMap.h" />
     <ClInclude Include="dependencies\include\imgui\imconfig.h" />
