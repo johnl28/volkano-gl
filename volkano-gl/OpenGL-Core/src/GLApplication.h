@@ -74,7 +74,7 @@ namespace glcore
 
 		bool m_CtxInitialised = false;
 
-		double m_DeltaTime = 0.0f;
+		float m_DeltaTime = 0.0f;
 
 		GLFWwindow* m_Window = nullptr;
 

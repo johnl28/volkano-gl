@@ -14,9 +14,12 @@ namespace glcore {
 	{
 		glm::vec3 Position;
 		glm::vec3 Velocity;
-		glm::vec3 Rotation;
+		glm::vec3 Rotation = glm::vec3(0);
 
 		glm::vec3 Color = glm::vec3(1);
+
+		float Size = 1.0f;
+		float SizeEnd = 5.0f;
 
 		float LifeRemaining = 0.0f;
 		float LifeTime = 1.0f;
@@ -32,6 +35,8 @@ namespace glcore {
 		void OnRender(Camera* camera);
 		void OnUpdate(float deltaTime);
 		void Emit(const Particle& particle);
+
+		void SetPosition(const glm::vec3 position) { m_Position = position; }
 
 	private:
 		int m_ParticleIndex = 999;

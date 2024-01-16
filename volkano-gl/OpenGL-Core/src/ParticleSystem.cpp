@@ -1,6 +1,9 @@
-#include "ParticleSystem.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glad/glad.h"
+
+#include "Log.h"
+#include "ParticleSystem.h"
+
 
 namespace glcore {
 
@@ -27,9 +30,12 @@ namespace glcore {
 				continue;
 			}
 
+			float lifePercentage = 1.0f - particle.LifeRemaining / particle.LifeTime;
+
 			particle.LifeRemaining -= deltaTime;
 			particle.Position += particle.Velocity;
-			particle.Rotation *= 0.01f * deltaTime;
+			particle.Rotation.x += 2.0f;
+			particle.Size = particle.SizeEnd * lifePercentage + 1.0f;
 
 		}
 	}
@@ -40,7 +46,9 @@ namespace glcore {
 
 		memcpy(&particle, &newParticle, sizeof(Particle));
 
-
+		particle.LifeRemaining = particle.LifeTime;
+		particle.Position = m_Position;
+		particle.IsActive = true;
 
 		if (--m_ParticleIndex < 0)
 		{
@@ -53,10 +61,23 @@ namespace glcore {
 		auto mesh = m_Model->GetMesh(0);
 		if (!mesh)
 		{
+			GLCORE_WARN("[Particle System] Null mesh.");
 			return;
 		}
 
 		mesh->Bind();
+		m_Shader->Bind();
+		m_Shader->SetUniformMatrix4fv("u_View", camera->GetViewMatrix());
+		m_Shader->SetUniformMatrix4fv("u_Projection", camera->GetProjectionMatrix());
+
+		glm::mat4 transformation(1.0f);
+		transformation = glm::translate(transformation, m_Position);
+		transformation = glm::scale(transformation, glm::vec3(0.01f));
+
+		m_Shader->SetUniformMatrix4fv("u_Transform", transformation);
+
+
+		glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
 
 		for (auto& particle : m_Particles)
 		{
@@ -68,8 +89,10 @@ namespace glcore {
 			mesh->Bind();
 
 			glm::mat4 transformation(1.0f);
-			transformation = glm::translate(transformation, m_Position);
-			m_Shader->Bind();
+			transformation = glm::translate(transformation, particle.Position);
+			transformation = glm::scale(transformation, glm::vec3(0.01f) * particle.Size);
+
+			transformation = glm::rotate(transformation, particle.Rotation.x, glm::vec3(1.0f, 0, 0));
 			m_Shader->SetUniformMatrix4fv("u_Transform", transformation);
 
 			glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
