@@ -40,6 +40,10 @@ namespace glcore {
 		void SetSpeed(float speed) { m_CameraSpeed = speed;  }
 
 
+		// FOV
+		float GetFOV() const { return m_Projection.fov; }
+		void SetFOV(float fov);
+
 		// Matrix
 		const glm::mat4& GetViewMatrix();
 		const glm::mat4& GetProjectionMatrix();
@@ -56,7 +60,7 @@ namespace glcore {
 	private:
 		float m_Yaw = -90.0f;
 		float m_Pitch = 0.0f;
-		float m_CameraSpeed = 0.2f;
+		float m_CameraSpeed = 50.2f;
 		float m_Sensitivity = 0.1f;
 
 		glm::vec3 m_CameraUp;

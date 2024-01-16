@@ -56,6 +56,12 @@ namespace glcore {
 		m_isViewMatrixDirty = true;
 	}
 
+	void Camera::SetFOV(float fov)
+	{
+		m_Projection.fov = fov;
+		m_isProjectionMatrixDirty = true;
+	}
+
 	const glm::mat4 &Camera::GetViewMatrix()
 	{
 		if (m_isViewMatrixDirty)
