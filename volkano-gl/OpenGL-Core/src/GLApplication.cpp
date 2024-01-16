@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "GLApplication.h"
 #include "Skybox.h"
+#include "ParticleSystem.h"
 
 #include "Model.h"
 #include "Core/Texture.h"
@@ -212,9 +213,21 @@ namespace glcore {
 		auto modelShader = GetShader("modelShader");
 		auto &renderer = Renderer::Get();
 
+		auto model = new Model();
+		model->Load("assets/models/shapes/cube.fbx");
+
+		ParticleSystem particleSystem(model);
+
+		Particle particle;
+		particle.LifeTime = 10.0f;
+		particle.Velocity = glm::vec3(0.0f, 1.0f, 0.0f);
+		particle.IsActive = true;
+
+		particleSystem.Emit(particle);
 
 		while (!glfwWindowShouldClose(m_Window))
 		{
+
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			m_UI->NewFrame();
@@ -224,6 +237,8 @@ namespace glcore {
 
 			UpdateCameraPosition();
 
+			particleSystem.OnRender(m_Camera.get());
+			particleSystem.OnUpdate(m_DeltaTime);
 
 			for (auto &model : m_Models)
 			{
@@ -232,9 +247,12 @@ namespace glcore {
 			}
 
 			m_Camera->Update(m_DeltaTime);
-			renderer.RenderSkybox(m_Skybox.get(), m_Camera.get());
 
-			//m_UI->OnUI(m_Camera.get(), m_DirectionalLight.get());
+			if (m_Skybox)
+			{
+				renderer.RenderSkybox(m_Skybox.get(), m_Camera.get());
+			}
+
 			OnUISettings();
 
 			m_UI->Render();
@@ -249,9 +267,13 @@ namespace glcore {
 	{
 
 		static auto cameraSpeed = m_Camera->GetSpeed();
+		static auto cameraFOV = m_Camera->GetFOV();
+
 		static auto lightColor = m_DirectionalLight->GetColor();
 		static auto lightPos = m_DirectionalLight->GetPosition();
+
 		static bool drawLines = false;
+		static bool skyBox = m_Skybox ? m_Skybox->IsEnabled(): false;
 
 		ImGui::Begin("General Settings");
 
@@ -266,6 +288,14 @@ namespace glcore {
 			glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
 		}
 
+		if (m_Skybox)
+		{
+			if (ImGui::Checkbox("Skybox", &skyBox))
+			{
+				m_Skybox->SetEnabled(skyBox);
+			}
+		}
+
 		if (ImGui::Checkbox("Draw Triangles", &drawLines))
 		{
 			auto flag = drawLines ? GL_LINE : GL_FILL;
@@ -275,10 +305,15 @@ namespace glcore {
 		// Camera Options
 		ImGui::NewLine();
 		ImGui::Text("Camera");
-		if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.001f, 5.0f))
+		if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.01f, 500.0f))
 		{
 			m_Camera->SetSpeed(cameraSpeed);
 		}
+		if (ImGui::SliderFloat("Camera FOV", &cameraFOV, 10.0f, 150.0f))
+		{
+			m_Camera->SetFOV(cameraFOV);
+		}
+
 
 		// Light Options
 		ImGui::NewLine();
@@ -332,19 +367,19 @@ namespace glcore {
 	{
 		if (glfwGetKey(m_Window, GLFW_KEY_A))
 		{
-			m_Camera->MoveX(1.0f);
+			m_Camera->MoveX(1.0f * m_DeltaTime);
 		}
 		if (glfwGetKey(m_Window, GLFW_KEY_D))
 		{
-			m_Camera->MoveX(-1.0f);
+			m_Camera->MoveX(-1.0f * m_DeltaTime);
 		}
 		if (glfwGetKey(m_Window, GLFW_KEY_W))
 		{
-			m_Camera->MoveZ(1.0f);
+			m_Camera->MoveZ(1.0f * m_DeltaTime);
 		}
 		if (glfwGetKey(m_Window, GLFW_KEY_S))
 		{
-			m_Camera->MoveZ(-1.0f);
+			m_Camera->MoveZ(-1.0f * m_DeltaTime);
 		}
 	}
 
@@ -353,7 +388,7 @@ namespace glcore {
 	{
 		// imediate mode camera look
 		static bool firstMouse = true;
-		static float lastX = 0, lastY = 0;
+		static double lastX = 0, lastY = 0;
 
 		if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 		{
@@ -366,13 +401,14 @@ namespace glcore {
 				firstMouse = false;
 			}
 
-			float xoffset = xpos - lastX;
-			float yoffset = lastY - ypos;
+			auto xoffset = xpos - lastX;
+			auto yoffset = lastY - ypos;
+
 			lastX = xpos;
 			lastY = ypos;
 
-			m_Camera->Yaw(xoffset);
-			m_Camera->Pitch(yoffset);
+			m_Camera->Yaw(static_cast<float>(xoffset));
+			m_Camera->Pitch(static_cast<float>(yoffset));
 		}
 		else if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 		{
