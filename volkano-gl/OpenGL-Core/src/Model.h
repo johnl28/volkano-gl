@@ -24,6 +24,8 @@ namespace glcore {
 
 		const std::vector<std::unique_ptr<Mesh>> &GetMeshes() const { return m_Meshes; }
 
+		Mesh* GetMesh(int index) const;
+
 		ShaderProgram* GetShader() const { return m_Shader; }
 		void SetShader(ShaderProgram* shader) { m_Shader = shader; }
 

@@ -58,6 +58,16 @@ namespace glcore {
 		return true;
 	}
 
+	Mesh* Model::GetMesh(int index) const
+	{
+		if (index >= m_Meshes.size())
+		{
+			return nullptr;
+		}
+
+		return m_Meshes[index].get();
+	}
+
 
 	void Model::LoadAiNode(const aiScene* scene, const aiNode* node)
 	{
