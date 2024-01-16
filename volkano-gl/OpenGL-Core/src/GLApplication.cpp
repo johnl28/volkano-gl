@@ -10,6 +10,8 @@
 #include "Skybox.h"
 #include "ParticleSystem.h"
 
+#include "GlRandom.h"
+
 #include "Model.h"
 #include "Core/Texture.h"
 #include "Core/ShaderProgram.h"
@@ -171,14 +173,14 @@ namespace glcore {
 		if (!cubeMap->IsLoaded())
 		{
 			GLCORE_ERR("[Application] Failed to load skybox textures.");
-			abort();
+			return;
 		}
 
 		auto shader = LoadShaders("skybox", "assets/shaders/skybox_vert.glsl", "assets/shaders/skybox_frag.glsl");
 		if (!shader->IsLinked())
 		{
 			GLCORE_ERR("[Application] Failed to load skybox shaders.");
-			abort();
+			return;
 		}
 
 		auto model = new Model();
@@ -186,7 +188,7 @@ namespace glcore {
 		if (!model->IsLoaded())
 		{
 			GLCORE_ERR("[Application] Failed to load skybox model.");
-			abort();
+			return;
 		}
 
 		auto skybox = new Skybox(model, cubeMap, shader);
@@ -217,16 +219,21 @@ namespace glcore {
 		model->Load("assets/models/shapes/cube.fbx");
 
 		ParticleSystem particleSystem(model);
+		particleSystem.SetPosition(glm::vec3(0, 5.0f, -50.0f));
 
-		Particle particle;
-		particle.LifeTime = 10.0f;
-		particle.Velocity = glm::vec3(0.0f, 1.0f, 0.0f);
-		particle.IsActive = true;
 
-		particleSystem.Emit(particle);
+			
 
 		while (!glfwWindowShouldClose(m_Window))
 		{
+			//if (glfwGetKey(m_Window, GLFW_KEY_Q) == GLFW_PRESS)
+			{
+				Particle particle;
+				particle.LifeTime = 1.0f;
+				particle.Velocity = glm::vec3(Random::Float(-0.3f, 0.3f), 1.0f, Random::Float(-0.3f, 0.3f));
+				particleSystem.Emit(particle);
+			}
+
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -237,8 +244,8 @@ namespace glcore {
 
 			UpdateCameraPosition();
 
-			particleSystem.OnRender(m_Camera.get());
 			particleSystem.OnUpdate(m_DeltaTime);
+			particleSystem.OnRender(m_Camera.get());
 
 			for (auto &model : m_Models)
 			{
@@ -354,7 +361,7 @@ namespace glcore {
 		static auto lastFrameTime = glfwGetTime();
 		auto currentFrameTime = glfwGetTime();
 
-		m_DeltaTime = currentFrameTime - lastFrameTime;
+		m_DeltaTime = static_cast<float>(currentFrameTime - lastFrameTime);
 		lastFrameTime = currentFrameTime;
 	}
 
