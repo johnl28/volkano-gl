@@ -36,6 +36,11 @@ namespace glcore {
 			return;
 		}
 
+		if (!skybox->IsEnabled())
+		{
+			return;
+		}
+
 		glDepthFunc(GL_LEQUAL);
 		//glDepthMask(GL_FALSE);
 
@@ -46,7 +51,6 @@ namespace glcore {
 		shader->Bind();
 		shader->SetUniformMatrix4fv("u_Projection", camera->GetProjectionMatrix());
 		shader->SetUniformMatrix4fv("u_View", view);
-		//shader->SetUniform1i("skybox", 0);
 
 		skybox->GetCubemap()->Bind();
 		auto model = skybox->GetModel();
