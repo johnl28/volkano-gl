@@ -23,7 +23,6 @@ namespace glcore {
 
 		void RenderModel(Model* model, Camera* camera, ShaderProgram* shader, Light* light);
 		void RenderSkybox(Skybox* skybox, Camera* camera);
-		void RenderLight(Light* light, Camera* camera, ShaderProgram* shader);
 
 	private:
 		Renderer() {};
