@@ -11,6 +11,7 @@
 #include "Model.h"
 #include "Light.h"
 #include "Skybox.h"
+#include "ParticleSystem.h"
 #include "Core/ShaderProgram.h"
 
 
@@ -34,7 +35,7 @@ namespace glcore
 
 		bool IsContextInitialised() const { return m_CtxInitialised; }
 
-		Model* LoadModel(const std::string& modelPath);
+		Model* LoadModel(const std::string& modelPath, bool addModel = true);
 		void AddModel(Model *model);
 
 		
@@ -42,6 +43,7 @@ namespace glcore
 		ShaderProgram* LoadShaders(const std::string& shaderName, const std::string& verShaderFile, const std::string& fragShaderFile);
 		void AddShader(const std::string& shaderName, ShaderProgram* shader);
 
+		ParticleSystem* CreateParticleSystem(Model* model, ShaderProgram* program);
 
 		void OnScroll(double xoffset, double yoffset);
 		void OnCursorMove(double xpos, double ypos);
@@ -83,13 +85,17 @@ namespace glcore
 
 		std::vector<std::unique_ptr<Model>> m_Models;
 		
-		glm::vec3 m_ClearColor = glm::vec3(0.0f);
 		float m_AmbientLight = 0.3f;
 		float m_SpecularStrength = 0.1f;
 
+		glm::vec3 m_ClearColor = glm::vec3(0.0f);
+
 		std::unique_ptr<Skybox> m_Skybox = nullptr;
 		std::unique_ptr<Light> m_DirectionalLight = nullptr;
-		std::unique_ptr<ShaderProgram> m_DefaultShader = nullptr;
+
+
+		std::vector<std::unique_ptr<ParticleSystem>> m_ParticleSystems;
+		std::unique_ptr<ParticleSystem> m_ParticleSystem = nullptr;
 		std::map<std::string, std::unique_ptr<ShaderProgram>> m_Shaders;
 	};
 

@@ -8,7 +8,6 @@
 #include "Log.h"
 #include "GLApplication.h"
 #include "Skybox.h"
-#include "ParticleSystem.h"
 
 #include "GlRandom.h"
 
@@ -30,7 +29,9 @@ namespace glcore {
 		m_Height = height;
 		m_Title = title;
 
+		// Init OpenGL Context
 		InitGLFW();
+
 		InitInputEvents();
 		InitUI();
 		InitCamera();
@@ -83,7 +84,8 @@ namespace glcore {
 
 		glViewport(0, 0, m_Width, m_Height);
 		glEnable(GL_DEPTH_TEST);
-
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
 		auto version = glGetString(GL_VERSION);
 		GLCORE_INFO("%s", (char*)version);
@@ -103,7 +105,7 @@ namespace glcore {
 		Projection projection = {
 			ProjectionType::PERSPECTIVE_PROJECTION,
 
-			45.0f,
+			80.0f,
 
 			(float)m_Width / (float)m_Height, 
 			0.10f, 
@@ -148,7 +150,6 @@ namespace glcore {
 		{
 			GLCORE_ERR("[Application] Failed to load default shaders.");
 			abort();
-			return;
 		}
 
 		modelShader->Bind();
@@ -195,6 +196,33 @@ namespace glcore {
 		m_Skybox = std::unique_ptr<Skybox>(skybox);
 	}
 
+	void GLApplication::InitDirectionalLight()
+	{
+		auto light = new Light(glm::vec3(0.0f), glm::vec3(1.0f));
+		auto model = LoadModel("assets/models/shapes/sphere.fbx");
+
+		if (model)
+		{
+			model->Scale(glm::vec3(0.005f));
+			model->SetShader(GetShader("lampShader"));
+
+			light->SetModel(model);
+		}
+
+		//light->SetColor(glm::vec3(1.0f, 0, 0));
+		light->SetPosition(glm::vec3(1.0f, 20.0f, -70.0f));
+
+		m_DirectionalLight = std::unique_ptr<Light>(light);
+	}
+
+	ParticleSystem* GLApplication::CreateParticleSystem(Model* model, ShaderProgram* program)
+	{
+		auto particleSystem = new ParticleSystem(model, program);
+		m_ParticleSystems.push_back(std::unique_ptr<ParticleSystem>(particleSystem));
+		return particleSystem;
+	}
+
+
 
 	void GLApplication::Run()
 	{
@@ -204,48 +232,38 @@ namespace glcore {
 			return;
 		}
 
-		m_DeltaTime = glfwGetTime();
-		
-
 		glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
-
-		auto texture = Texture("assets/textures/GreyboxTextures/greybox_grey_grid.png");
-		texture.Bind();
 
 		auto modelShader = GetShader("modelShader");
 		auto &renderer = Renderer::Get();
-
-		auto model = new Model();
-		model->Load("assets/models/shapes/cube.fbx");
-
-		ParticleSystem particleSystem(model);
-		particleSystem.SetPosition(glm::vec3(0, 5.0f, -50.0f));
-
-
-			
+		
 
 		while (!glfwWindowShouldClose(m_Window))
 		{
-			//if (glfwGetKey(m_Window, GLFW_KEY_Q) == GLFW_PRESS)
+			if (!m_Camera)
 			{
-				Particle particle;
-				particle.LifeTime = 1.0f;
-				particle.Velocity = glm::vec3(Random::Float(-0.3f, 0.3f), 1.0f, Random::Float(-0.3f, 0.3f));
-				particleSystem.Emit(particle);
+				GLCORE_ERR("[GLApplication] Cannot render without a camera.");
+				break;
 			}
-
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			m_UI->NewFrame();
+			if (m_UI) 
+			{
+				m_UI->NewFrame();
+			}
 
 			glfwPollEvents();
 			CalculateFrameTime();
 
 			UpdateCameraPosition();
 
-			particleSystem.OnUpdate(m_DeltaTime);
-			particleSystem.OnRender(m_Camera.get());
+			for (auto &particleSystem : m_ParticleSystems)
+			{
+				particleSystem->OnRenderUI();
+				particleSystem->OnUpdate(m_DeltaTime);
+				particleSystem->OnRender(m_Camera.get());
+			}
 
 			for (auto &model : m_Models)
 			{
@@ -262,7 +280,10 @@ namespace glcore {
 
 			OnUISettings();
 
-			m_UI->Render();
+			if (m_UI)
+			{
+				m_UI->Render();
+			}
 
 			glfwSwapBuffers(m_Window);
 		}
@@ -273,14 +294,9 @@ namespace glcore {
 	void GLApplication::OnUISettings()
 	{
 
-		static auto cameraSpeed = m_Camera->GetSpeed();
-		static auto cameraFOV = m_Camera->GetFOV();
-
-		static auto lightColor = m_DirectionalLight->GetColor();
-		static auto lightPos = m_DirectionalLight->GetPosition();
 
 		static bool drawLines = false;
-		static bool skyBox = m_Skybox ? m_Skybox->IsEnabled(): false;
+
 
 		ImGui::Begin("General Settings");
 
@@ -290,6 +306,11 @@ namespace glcore {
 
 		// General
 		ImGui::Text("General");
+		if (ImGui::Checkbox("Draw Triangles", &drawLines))
+		{
+			auto flag = drawLines ? GL_LINE : GL_FILL;
+			glPolygonMode(GL_FRONT_AND_BACK, flag);
+		}
 		if (ImGui::ColorEdit3("Clear Color", &m_ClearColor[0]))
 		{
 			glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
@@ -297,58 +318,82 @@ namespace glcore {
 
 		if (m_Skybox)
 		{
+			static bool skyBox = m_Skybox->IsEnabled();
+			static glm::vec4 ambientColor = m_Skybox->GetAmbientColor();
+
 			if (ImGui::Checkbox("Skybox", &skyBox))
 			{
 				m_Skybox->SetEnabled(skyBox);
 			}
+			if (ImGui::ColorEdit4("Ambient Color", &ambientColor[0]))
+			{
+				m_Skybox->SetAmbientColor(ambientColor);
+			}
 		}
 
-		if (ImGui::Checkbox("Draw Triangles", &drawLines))
-		{
-			auto flag = drawLines ? GL_LINE : GL_FILL;
-			glPolygonMode(GL_FRONT_AND_BACK, flag);
-		}
 
-		// Camera Options
-		ImGui::NewLine();
-		ImGui::Text("Camera");
-		if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.01f, 500.0f))
+		if (m_Camera)
 		{
-			m_Camera->SetSpeed(cameraSpeed);
-		}
-		if (ImGui::SliderFloat("Camera FOV", &cameraFOV, 10.0f, 150.0f))
-		{
-			m_Camera->SetFOV(cameraFOV);
+			static auto cameraSpeed = m_Camera->GetSpeed();
+			static auto cameraFOV = m_Camera->GetFOV();
+			static auto cameraSenzitivity = m_Camera->GetSenzitivity();
+			auto cameraPos = m_Camera->GetPosition();
+			
+
+			// Camera Options
+			ImGui::NewLine();
+			ImGui::Text("Camera");
+			if (ImGui::DragFloat3("Camera Coordinates", &cameraPos[0]))
+			{
+				m_Camera->SetPosition(cameraPos);
+			}
+			if (ImGui::SliderFloat("Camera Senzitivity", &cameraSenzitivity, 0.01f, 2.0f))
+			{
+				m_Camera->SetSenzitivity(cameraSenzitivity);
+			}
+			if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.01f, 500.0f))
+			{
+				m_Camera->SetSpeed(cameraSpeed);
+			}
+			if (ImGui::SliderFloat("Camera FOV", &cameraFOV, 10.0f, 150.0f))
+			{
+				m_Camera->SetFOV(cameraFOV);
+			}
 		}
 
 
 		// Light Options
-		ImGui::NewLine();
-		ImGui::Text("Light");
-		if (ImGui::ColorEdit3("Light Color", &lightColor[0]))
+		if (m_DirectionalLight)
 		{
-			m_DirectionalLight->SetColor(lightColor);
-		}
+			static auto lightColor = m_DirectionalLight->GetColor();
+			auto lightPos = m_DirectionalLight->GetPosition();
 
-		if (ImGui::DragFloat3("Light Position", &lightPos[0]))
-		{
-			m_DirectionalLight->SetPosition(lightPos);
-		}
+			ImGui::NewLine();
+			ImGui::Text("Light");
+			if (ImGui::ColorEdit3("Light Color", &lightColor[0]))
+			{
+				m_DirectionalLight->SetColor(lightColor);
+			}
 
-		if (ImGui::SliderFloat("Ambient Light Strength", &m_AmbientLight, 0.0f, 1.0f))
-		{
-			auto shader = GetShader("modelShader");
-			shader->Bind();
-			shader->SetUniform1f("u_AmbientLight", m_AmbientLight);
-		}
+			if (ImGui::DragFloat3("Light Position", &lightPos[0]))
+			{
+				m_DirectionalLight->SetPosition(lightPos);
+			}
 
-		if (ImGui::SliderFloat("Specular Strength", &m_SpecularStrength, 0.0f, 10.0f))
-		{
-			auto shader = GetShader("modelShader");
-			shader->Bind();
-			shader->SetUniform1f("u_SpecularStrength", m_SpecularStrength);
-		}
+			if (ImGui::SliderFloat("Ambient Light Strength", &m_AmbientLight, 0.0f, 1.0f))
+			{
+				auto shader = GetShader("modelShader");
+				shader->Bind();
+				shader->SetUniform1f("u_AmbientLight", m_AmbientLight);
+			}
 
+			if (ImGui::SliderFloat("Specular Strength", &m_SpecularStrength, 0.0f, 10.0f))
+			{
+				auto shader = GetShader("modelShader");
+				shader->Bind();
+				shader->SetUniform1f("u_SpecularStrength", m_SpecularStrength);
+			}
+		}
 
 		// Info text
 		ImGui::NewLine();
@@ -424,27 +469,7 @@ namespace glcore {
 		}
 	}
 
-	void GLApplication::InitDirectionalLight()
-	{
-		auto light = new Light(glm::vec3(0.0f), glm::vec3(1.0f));
-		auto model = LoadModel("assets/models/shapes/sphere.fbx");
-
-		if (model)
-		{
-			model->Scale(glm::vec3(0.005f));
-			model->SetShader(GetShader("lampShader"));
-
-			light->SetModel(model);
-		}
-
-		//light->SetColor(glm::vec3(1.0f, 0, 0));
-		light->SetPosition(glm::vec3(1.0f, 20.0f, -70.0f));
-
-		m_DirectionalLight = std::unique_ptr<Light>(light);
-	}
-
-
-	Model* GLApplication::LoadModel(const std::string& modelPath)
+	Model* GLApplication::LoadModel(const std::string& modelPath, bool addModel /* = true */)
 	{
 		auto model = new Model();
 		model->Load(modelPath);
@@ -455,7 +480,10 @@ namespace glcore {
 			return nullptr;
 		}
 
-		AddModel(model);
+		if (addModel)
+		{
+			AddModel(model);
+		}
 		return model;
 	}
 
