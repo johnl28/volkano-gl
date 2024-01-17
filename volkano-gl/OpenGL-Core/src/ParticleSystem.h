@@ -46,7 +46,9 @@ namespace glcore {
 	private:
 		Particle m_ParticleSettings;
 
-		
+		bool m_Physics = false;
+		float m_Gravity = 0.3f;
+
 		bool m_Enabled = true;
 		int m_ParticleIndex = 999;
 		

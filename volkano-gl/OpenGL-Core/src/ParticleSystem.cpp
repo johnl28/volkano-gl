@@ -66,7 +66,14 @@ namespace glcore {
 
 
 			particle.LifeRemaining -= deltaTime;
+
+			if (m_Physics)
+			{
+				particle.Velocity.y += -m_Gravity * deltaTime;
+			}
+
 			particle.Position += particle.Velocity;
+
 			particle.Rotation.x += 2.0f * deltaTime;
 
 			++m_TotalActiveParticles;
@@ -78,6 +85,12 @@ namespace glcore {
 		ImGui::Begin("Volcano Settings");
 
 		ImGui::Checkbox("Enabled", &m_Enabled);
+		ImGui::Checkbox("Physics Simulation", &m_Physics);
+		if (m_Physics)
+		{
+			ImGui::SliderFloat("Gravity Force", &m_Gravity, 0.01f, 2.0f);
+		}
+
 		ImGui::SliderFloat("Life Time", &m_ParticleSettings.LifeTime, 0.1f, 10.0f);
 		ImGui::SliderFloat("Radius", &m_Radius, 1.0f, 180.0f);
 
