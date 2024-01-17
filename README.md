@@ -1,7 +1,7 @@
 # volkano-gl
 ![image](https://github.com/johnl28/volkano-gl/assets/54412955/9fa7064a-1622-4d94-a818-7dec4192815d)
 
-Volkano-gl is an interactive 3D simulation scene of a volcano eruption created with C++ and OpenGL as a University Project.
+Volkano-gl is an interactive 3D simulation scene of a volcano eruption created with C++ and OpenGL from scratch as a University Project.
 
 The purpose of this project is to demonstrate a basic understanding of modern OpenGL and the computer graphics pipeline.
 
