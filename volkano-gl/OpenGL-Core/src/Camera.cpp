@@ -16,6 +16,12 @@ namespace glcore {
 
 	}
 
+	void Camera::SetPosition(const glm::vec3& position)
+	{
+		m_Position = position;
+		m_isViewMatrixDirty = true;
+	}
+
 	void Camera::MoveX(float direction)
 	{
 		m_Position += glm::normalize(glm::cross(m_CameraUp, m_CameraFront)) * direction * m_CameraSpeed;

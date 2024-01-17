@@ -27,6 +27,7 @@ namespace glcore {
 		void Update(float deltaTime);
 
 		// Movement
+		void SetPosition(const glm::vec3& position);
 		void MoveX(float direction);
 		void MoveY(float direction);
 		void MoveZ(float direction);
@@ -35,13 +36,43 @@ namespace glcore {
 		void Yaw(float offset);
 		void Pitch(float offset);
 
+		float GetYaw() const 
+		{ 
+			return m_Yaw; 
+		}
+
+		float GetPitch() const 
+		{ 
+			return m_Pitch; 
+		}
+
+		float GetSenzitivity() const 
+		{ 
+			return m_Sensitivity; 
+		}
+
+		void SetSenzitivity(float sensitivity) 
+		{ 
+			m_Sensitivity = sensitivity; 
+		}
+
 		// Speed
-		float GetSpeed() { return m_CameraSpeed; }
-		void SetSpeed(float speed) { m_CameraSpeed = speed;  }
+		float GetSpeed() 
+		{ 
+			return m_CameraSpeed; 
+		}
+
+		void SetSpeed(float speed) 
+		{ 
+			m_CameraSpeed = speed;  
+		}
 
 
 		// FOV
-		float GetFOV() const { return m_Projection.fov; }
+		float GetFOV() const 
+		{ 
+			return m_Projection.fov; 
+		}
 		void SetFOV(float fov);
 
 		// Matrix
@@ -49,8 +80,15 @@ namespace glcore {
 		const glm::mat4& GetProjectionMatrix();
 		const glm::vec3& GetPosition();
 
-		bool IsViewMatrixDirty() const { return m_isViewMatrixDirty; }
-		bool IsProjectionMatrixDirty() const { return m_isProjectionMatrixDirty; }
+		bool IsViewMatrixDirty() const 
+		{ 
+			return m_isViewMatrixDirty; 
+		}
+
+		bool IsProjectionMatrixDirty() const 
+		{ 
+			return m_isProjectionMatrixDirty; 
+		}
 
 
 	private:
