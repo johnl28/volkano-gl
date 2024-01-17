@@ -37,6 +37,11 @@ namespace glcore {
 		return m_TransformMatrix;
 	}
 
+	void Mesh::SetTexture(Texture* texture)
+	{
+		m_Texture = std::unique_ptr<Texture>(texture);
+	}
+
 	void Mesh::SetPosition(const glm::vec3& newPosition)
 	{
 		m_Position = newPosition;

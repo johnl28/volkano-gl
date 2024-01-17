@@ -21,6 +21,8 @@ namespace glcore {
 		void LoadTexture(const std::string& texturePath);
 		const glm::mat4& GetTransformMatrix();
 
+		void SetTexture(Texture* texture);
+
 		GLuint GetIndexCount() const { return m_IndexBuffer->GetCount(); }
 		GLuint GetID() const { return m_VertexArray->GetID(); }
 
