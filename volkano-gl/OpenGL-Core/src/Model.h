@@ -59,6 +59,7 @@ namespace glcore {
 		glm::vec3 m_Position = glm::vec3(0.0f);
 		glm::vec3 m_Rotation = glm::vec3(0.0f);
 
+
 		ShaderProgram* m_Shader = nullptr;
 		std::vector<std::unique_ptr<Mesh>> m_Meshes;
 	};

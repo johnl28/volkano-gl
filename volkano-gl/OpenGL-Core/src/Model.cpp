@@ -73,7 +73,7 @@ namespace glcore {
 	{
 
 		// Load Meshes within the node
-		for (auto i = 0; i < node->mNumMeshes; ++i)
+		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 		{
 			auto meshData = scene->mMeshes[node->mMeshes[i]];
 
@@ -81,7 +81,7 @@ namespace glcore {
 		}
 
 		// Load the child nodes
-		for (auto x = 0; x < node->mNumChildren; ++x)
+		for (unsigned int x = 0; x < node->mNumChildren; ++x)
 		{
 			LoadAiNode(scene, node->mChildren[x]);
 		}
@@ -154,6 +154,8 @@ namespace glcore {
 
 			myMesh->LoadTexture(fullPath);
 		}
+		aiColor3D color(0.f, 0.f, 0.f);
+		aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 
 		m_Meshes.push_back(std::unique_ptr<Mesh>(myMesh));
 
