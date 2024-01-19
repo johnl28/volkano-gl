@@ -1,6 +1,6 @@
 # volkano-gl
-![image](https://github.com/johnl28/volkano-gl/assets/54412955/9fa7064a-1622-4d94-a818-7dec4192815d)
 
+![image](https://github.com/johnl28/volkano-gl/assets/54412955/42a7de8d-8190-40e3-85f5-084c059a2307)
 
 
 
@@ -74,3 +74,6 @@ Project Dependencies:
 - [Glad](https://glad.dav1d.de/)
 - [ImGui](https://github.com/ocornut/imgui)
 
+## Resources Used
+- [Skybox](https://opengameart.org/content/skiingpenguins-skybox-pack)
+- [Volcano Model](https://skfb.ly/oyQOx)
