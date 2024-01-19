@@ -12,12 +12,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VolkanoSandbox", "VolkanoSa
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Coursework|x64 = Coursework|x64
+		Coursework|x86 = Coursework|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Coursework|x64.ActiveCfg = Coursework|x64
+		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Coursework|x64.Build.0 = Coursework|x64
+		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Coursework|x86.ActiveCfg = Coursework|Win32
+		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Coursework|x86.Build.0 = Coursework|Win32
 		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Debug|x64.ActiveCfg = Debug|x64
 		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Debug|x64.Build.0 = Debug|x64
 		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Debug|x86.ActiveCfg = Debug|Win32
@@ -26,6 +32,10 @@ Global
 		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Release|x64.Build.0 = Release|x64
 		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Release|x86.ActiveCfg = Release|Win32
 		{E1BEDB8A-504A-4254-8DE4-FF09EA510D1D}.Release|x86.Build.0 = Release|Win32
+		{3D3AEC4F-5DF8-4A0A-B8E0-64C6117DAD84}.Coursework|x64.ActiveCfg = Coursework|x64
+		{3D3AEC4F-5DF8-4A0A-B8E0-64C6117DAD84}.Coursework|x64.Build.0 = Coursework|x64
+		{3D3AEC4F-5DF8-4A0A-B8E0-64C6117DAD84}.Coursework|x86.ActiveCfg = Coursework|Win32
+		{3D3AEC4F-5DF8-4A0A-B8E0-64C6117DAD84}.Coursework|x86.Build.0 = Coursework|Win32
 		{3D3AEC4F-5DF8-4A0A-B8E0-64C6117DAD84}.Debug|x64.ActiveCfg = Debug|x64
 		{3D3AEC4F-5DF8-4A0A-B8E0-64C6117DAD84}.Debug|x64.Build.0 = Debug|x64
 		{3D3AEC4F-5DF8-4A0A-B8E0-64C6117DAD84}.Debug|x86.ActiveCfg = Debug|Win32
