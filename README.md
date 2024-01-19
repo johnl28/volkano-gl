@@ -76,4 +76,4 @@ Project Dependencies:
 
 ## Resources Used
 - [Skybox](https://opengameart.org/content/skiingpenguins-skybox-pack)
-- [Volcano Model](https://sketchfab.com/3d-models/volcano-with-2-houses-05b898cc683b437fbc00461d5e6cd20f)
+- [Volcano Model](https://skfb.ly/oyQOx)
