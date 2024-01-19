@@ -4,6 +4,9 @@
 
 namespace glcore {
 
+	/**
+	 * @brief Represents a single vertex in 3D space, including its position, texture coordinates, and normals.
+	 */
 	struct Vertex
 	{
 		glm::vec3 position;
@@ -12,6 +15,12 @@ namespace glcore {
 	};
 
 
+	/**
+	 * @brief Manages an OpenGL Vertex Buffer Object (VBO), handling its creation, binding, and unbinding.
+	 * @param data Pointer to the vertex data.
+	 * @param size Size of the vertex data in bytes.
+	 * @param usage Hint for the intended use of the data (default is GL_STATIC_DRAW).
+	 */
 	class VertexBuffer
 	{
 	public:

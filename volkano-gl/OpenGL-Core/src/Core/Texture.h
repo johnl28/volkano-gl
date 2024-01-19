@@ -6,6 +6,12 @@
 
 namespace glcore {
 
+
+	/**
+	 * @brief Manages an OpenGL texture, handling loading from file, binding, and unbinding.
+	 * @param texturePath Path to the texture file.
+	 * @param flip Optional parameter to flip the texture vertically during loading (default is false).
+	 */
 	class Texture
 	{
 	public:

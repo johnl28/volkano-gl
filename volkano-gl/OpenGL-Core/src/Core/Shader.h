@@ -6,7 +6,11 @@
 
 namespace glcore {
 
-
+	/**
+	 * @brief Represents a single OpenGL shader, handling its creation, compilation, and management.
+	 * @param file Path to the shader source file.
+	 * @param shaderType The type of shader (e.g., GL_VERTEX_SHADER, GL_FRAGMENT_SHADER).
+	 */
 	class Shader
 	{
 	public:

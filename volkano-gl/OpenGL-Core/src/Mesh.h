@@ -11,10 +11,13 @@
  
 namespace glcore {
 
-	/*
-		Mesh class
-		It takes a 
-	*/
+	/**
+	 * @brief Represents a 3D mesh, encapsulating vertex and index data, texture, and transformation properties.
+	 * @param vertexData Pointer to the vertex data array.
+	 * @param vertexDataSize Size of the vertex data array.
+	 * @param indexData Pointer to the index data array.
+	 * @param indexCount Number of indices in the index data array.
+	 */
 	class Mesh
 	{
 	public:

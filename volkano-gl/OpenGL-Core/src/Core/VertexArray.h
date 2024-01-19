@@ -6,6 +6,10 @@
 
 namespace glcore {
 
+	/**
+	 * @brief Represents a single vertex attribute in a Vertex Array, including its type, count, and normalization flag.
+	 * Provides a static method to get the size of different OpenGL data types used in vertex attributes.
+	 */
 	struct VertexAttribute
 	{
 		GLenum type;
@@ -37,7 +41,9 @@ namespace glcore {
 		}
 	};
 
-
+	/**
+	 * @brief Manages an OpenGL Vertex Array Object (VAO), handling binding, unbinding, and attribute configuration.
+	 */
 	class VertexArray
 	{
 	public:

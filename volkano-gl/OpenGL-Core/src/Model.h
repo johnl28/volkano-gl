@@ -13,7 +13,10 @@
 
 namespace glcore {
 
-
+	/**
+	 * @brief Manages a 3D model, handling loading from file, and maintaining its meshes, shader, and transformations.
+	 * @param filePath Path to the model file for loading.
+	 */
 	class Model
 	{
 	public:

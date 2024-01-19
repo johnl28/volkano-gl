@@ -83,6 +83,8 @@ namespace glcore {
 		}
 
 		glViewport(0, 0, m_Width, m_Height);
+		glEnable(GL_CULL_FACE);
+
 		glEnable(GL_DEPTH_TEST);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -172,6 +174,7 @@ namespace glcore {
 			"assets/textures/skybox/front.jpg", // front
 			"assets/textures/skybox/back.jpg" // back
 		};
+
 
 		auto cubeMap = new CubeMap(textures);
 		if (!cubeMap->IsLoaded())

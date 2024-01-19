@@ -6,10 +6,11 @@
 
 namespace glcore {
 
-	// This is just a prototype Light class that renders chosen 3D model where the light is placed
-	// With the current approach the model used to represent a light cannot be reused
-	// A good approach would be to use batch rendering and a Mesh/Model instantiation system
-
+	/** 
+	 * @brief This is just a prototype Light class that renders a chosen 3D model as a representation.
+	 * @param position Initial position of the light in world space.
+	 * @param color Color of the light.
+	*/
 	class Light
 	{
 	public:

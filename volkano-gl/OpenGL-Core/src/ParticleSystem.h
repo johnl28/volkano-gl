@@ -28,6 +28,12 @@ namespace glcore {
 		bool IsActive = false;
 	};
 
+
+	/**
+	 * @brief Manages a particle system, handling the generation, updating, and rendering of particles.
+	 * @param model Pointer to the model used for rendering each particle.
+	 * @param shader Pointer to the shader program used for rendering particles.
+	 */
 	class ParticleSystem 
 	{
 	public:

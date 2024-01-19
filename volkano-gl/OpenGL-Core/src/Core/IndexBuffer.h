@@ -3,6 +3,11 @@
 
 namespace glcore {
 
+	/**
+	 * @brief Manages an OpenGL index buffer, used for efficient rendering of vertex data.
+	 * @param data Pointer to the index data array.
+	 * @param count The number of indices in the data array.
+	 */
 	class IndexBuffer
 	{
 	public:

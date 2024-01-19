@@ -9,6 +9,10 @@
 
 namespace glcore {
 
+
+	/**
+	 * @brief Manages an OpenGL shader program, encapsulating shader attachment, linking, and uniform management.
+	 */
 	class ShaderProgram
 	{
 	public:

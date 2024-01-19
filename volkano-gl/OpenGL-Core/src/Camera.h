@@ -19,6 +19,14 @@ namespace glcore {
 		float far;
 	};
 
+
+	/**
+	 * @class Camera
+	 * @brief Represents a camera in a 3D space, managing its position, orientation, and projection.
+	 *
+	 * @param position Initial position of the camera in world space.
+	 * @param projection Struct containing projection parameters (like field of view, aspect ratio).
+	 */
 	class Camera
 	{
 	public:

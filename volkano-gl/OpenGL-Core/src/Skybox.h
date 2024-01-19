@@ -6,6 +6,12 @@
 
 namespace glcore {
 
+	/**
+	 * @brief Represents a skybox in a 3D scene, managing its model, cubemap texture, and shader program.
+	 * @param model Pointer to the model used for the skybox.
+	 * @param cubemap Pointer to the cubemap texture applied to the skybox.
+	 * @param shader Pointer to the shader program used for rendering the skybox.
+	 */
 	class Skybox
 	{
 	public:

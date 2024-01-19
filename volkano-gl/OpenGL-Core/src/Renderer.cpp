@@ -43,7 +43,7 @@ namespace glcore {
 		}
 
 		glDepthFunc(GL_LEQUAL);
-
+		glCullFace(GL_FRONT);
 		glm::mat4 view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
 
 
@@ -61,7 +61,7 @@ namespace glcore {
 
 			glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
 		}
-
+		glCullFace(GL_BACK);
 		glDepthFunc(GL_LESS);
 	}
 

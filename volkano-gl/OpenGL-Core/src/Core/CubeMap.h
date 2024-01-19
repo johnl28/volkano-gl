@@ -6,6 +6,10 @@
 
 namespace glcore {
 
+	/**
+	 * @brief Manages a cubemap texture for environment mapping in a 3D scene.
+	 * @param texturesPaths A vector of strings containing the paths to the six textures for the cubemap.
+	 */
 	class CubeMap
 	{
 	public:

@@ -7,6 +7,9 @@
 
 namespace glcore {
 
+	/**
+	 * @brief Manages rendering operations in a 3D scene, including models and skyboxes.
+	 */
 	class Renderer
 	{
 	public:

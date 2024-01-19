@@ -23,10 +23,12 @@ namespace glcore
 	void GlWindowResizeCallBack(GLFWwindow* window, int width, int height);
 
 
-	/*
-		GLApplication 
-
-	*/
+	/**
+	 * @brief Encapsulates the main functionality for an OpenGL application, including window and resource management.
+	 * @param width The width of the application window.
+	 * @param height The height of the application window.
+	 * @param title The title of the application window.
+	 */
 	class GLApplication
 	{
 	public:

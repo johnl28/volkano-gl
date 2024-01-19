@@ -20,6 +20,10 @@ int main()
 	volcano->Scale(glm::vec3(0.01f));
 	volcano->Move(glm::vec3(0, 0, -50.0f));
 
+	auto signaturePlane = app.LoadModel("assets/models/signature_plane.fbx");
+	signaturePlane->Rotate(glm::vec3(0, 0, 0));
+	signaturePlane->Move(glm::vec3(0, -50.0f, -50.0f));
+	signaturePlane->Scale(glm::vec3(0.05f));
 
 	// Load Texture for debugging purpose
 	auto texture = glcore::Texture("assets/textures/GreyboxTextures/greybox_dark_solid.png");
