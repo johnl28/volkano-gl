@@ -84,6 +84,7 @@ namespace glcore {
 
 		glViewport(0, 0, m_Width, m_Height);
 		glEnable(GL_DEPTH_TEST);
+
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
@@ -161,13 +162,15 @@ namespace glcore {
 
 	void GLApplication::InitSkybox()
 	{
+
+		// maybe use a struct/enums ???
 		std::vector<std::string> textures = { 
-			"assets/textures/skybox/right.jpg",
-			"assets/textures/skybox/left.jpg",
-			"assets/textures/skybox/top.jpg",
-			"assets/textures/skybox/bottom.jpg",
-			"assets/textures/skybox/front.jpg",
-			"assets/textures/skybox/back.jpg" 
+			"assets/textures/skybox/right.jpg", // right
+			"assets/textures/skybox/left.jpg", // left
+			"assets/textures/skybox/top.jpg", // top
+			"assets/textures/skybox/bottom.jpg", // bottom
+			"assets/textures/skybox/front.jpg", // front
+			"assets/textures/skybox/back.jpg" // back
 		};
 
 		auto cubeMap = new CubeMap(textures);
@@ -203,14 +206,14 @@ namespace glcore {
 
 		if (model)
 		{
-			model->Scale(glm::vec3(0.005f));
+			model->Scale(glm::vec3(0.05f));
 			model->SetShader(GetShader("lampShader"));
 
 			light->SetModel(model);
 		}
 
 		//light->SetColor(glm::vec3(1.0f, 0, 0));
-		light->SetPosition(glm::vec3(1.0f, 20.0f, -70.0f));
+		light->SetPosition(glm::vec3(1.0f, 150.0f, -70.0f));
 
 		m_DirectionalLight = std::unique_ptr<Light>(light);
 	}
@@ -257,6 +260,7 @@ namespace glcore {
 			CalculateFrameTime();
 
 			UpdateCameraPosition();
+			m_Camera->Update(m_DeltaTime);
 
 			for (auto &particleSystem : m_ParticleSystems)
 			{
@@ -271,17 +275,16 @@ namespace glcore {
 				renderer.RenderModel(model.get(), m_Camera.get(), shader, m_DirectionalLight.get());
 			}
 
-			m_Camera->Update(m_DeltaTime);
 
 			if (m_Skybox)
 			{
 				renderer.RenderSkybox(m_Skybox.get(), m_Camera.get());
 			}
 
-			OnUISettings();
 
 			if (m_UI)
 			{
+				OnUISettings();
 				m_UI->Render();
 			}
 

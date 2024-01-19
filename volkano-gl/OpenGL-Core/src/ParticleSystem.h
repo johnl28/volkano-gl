@@ -46,14 +46,14 @@ namespace glcore {
 	private:
 		Particle m_ParticleSettings;
 
-		bool m_Physics = false;
-		float m_Gravity = 0.3f;
+		bool m_Physics = true;
+		float m_Gravity = 1.0f;
 
-		bool m_Enabled = true;
+		bool m_Enabled = false;
 		int m_ParticleIndex = 999;
 		
 		int m_TotalActiveParticles = 0;
-		float m_Radius = 30.0f;
+		float m_Radius = 85.0f;
 		glm::vec3 m_Position = glm::vec3(0);
 
 		std::unique_ptr<ShaderProgram> m_Shader = nullptr;

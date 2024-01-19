@@ -17,7 +17,7 @@ namespace glcore {
 	class Model
 	{
 	public:
-		void Render(ShaderProgram *shader);
+
 		bool Load(const std::string& filePath);
 		
 		bool IsLoaded() const { return m_Loaded; }

@@ -5,28 +5,6 @@
 
 namespace glcore {
 
-	void Model::Render(ShaderProgram* shader)
-	{
-		if (!m_Loaded)
-		{
-			GLCORE_ERR("[Model] Cannot render a model that is not loaded.");
-			return;
-		}
-
-
-		// Bind shader
-		shader->Bind();
-
-		// Render each mesh in the model
-		for (auto& mesh : m_Meshes)
-		{
-			mesh->Bind();
-			shader->SetUniformMatrix4fv("u_Transform", mesh->GetTransformMatrix());
-
-			glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
-		}
-	}
-
 	bool Model::Load(const std::string& filePath)
 	{
 		Assimp::Importer importer;
@@ -145,7 +123,12 @@ namespace glcore {
 
 		auto myMesh = new Mesh(vertices.data(), sizeof(Vertex) * vertices.size(), indices.data(), indices.size());
 
+		//GLCORE_WARN("[Model] [Material] Material name: %s, Diffuse Textures: %d, Ambient Textures: %d", 
+		//	aiMaterial->GetName().C_Str(), aiMaterial->GetTextureCount(aiTextureType_DIFFUSE), aiMaterial->GetTextureCount(aiTextureType_NONE));
+
+
 		aiString texturePath;
+		aiMaterial->GetTextureCount(aiTextureType_DIFFUSE);
 		aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
 		if (texturePath.length)
 		{

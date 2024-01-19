@@ -22,6 +22,11 @@ namespace glcore
 	void GlKeyInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void GlWindowResizeCallBack(GLFWwindow* window, int width, int height);
 
+
+	/*
+		GLApplication 
+
+	*/
 	class GLApplication
 	{
 	public:
@@ -86,7 +91,7 @@ namespace glcore
 		std::vector<std::unique_ptr<Model>> m_Models;
 		
 		float m_AmbientLight = 0.3f;
-		float m_SpecularStrength = 0.1f;
+		float m_SpecularStrength = 0.0f;
 
 		glm::vec3 m_ClearColor = glm::vec3(0.0f);
 

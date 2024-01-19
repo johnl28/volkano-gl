@@ -90,6 +90,7 @@ namespace glcore {
 		{
 			ImGui::SliderFloat("Gravity Force", &m_Gravity, 0.01f, 2.0f);
 		}
+		ImGui::DragFloat3("Emitter Position", &m_Position[0]);
 
 		ImGui::SliderFloat("Life Time", &m_ParticleSettings.LifeTime, 0.1f, 10.0f);
 		ImGui::SliderFloat("Radius", &m_Radius, 1.0f, 180.0f);

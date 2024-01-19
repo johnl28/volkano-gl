@@ -11,6 +11,10 @@
  
 namespace glcore {
 
+	/*
+		Mesh class
+		It takes a 
+	*/
 	class Mesh
 	{
 	public:

@@ -16,15 +16,13 @@ int main()
 
 
 	// Load Volcano Model
-	auto volcano = app.LoadModel("assets/models/volcanofull.fbx");
-	volcano->Scale(glm::vec3(0.1f));
+	auto volcano = app.LoadModel("assets/models/volcano.fbx");
+	volcano->Scale(glm::vec3(0.01f));
 	volcano->Move(glm::vec3(0, 0, -50.0f));
-	//auto volcanoTexture = new glcore::Texture("assets/textures/volcano_texture.jpg");
-	//auto mesh = volcano->GetMesh(0);
-	//mesh->SetTexture(volcanoTexture);
+
 
 	// Load Texture for debugging purpose
-	auto texture = glcore::Texture("assets/textures/GreyboxTextures/greybox_grey_grid.png");
+	auto texture = glcore::Texture("assets/textures/GreyboxTextures/greybox_dark_solid.png");
 	texture.Bind();
 
 	auto particleShader = app.LoadShaders("particle", "assets/shaders/particle_vert.glsl", "assets/shaders/particle_frag.glsl");
@@ -32,16 +30,18 @@ int main()
 
 
 	auto volcanoEffect = app.CreateParticleSystem(particleModel, particleShader);
+	volcanoEffect->SetPosition(glm::vec3(-7.0f, 22.0f, -51.0f));
+
 	glcore::Particle particle;
-	particle.LifeTime = 2.0f;
+	particle.LifeTime = 3.0f;
 	particle.ColorStart = { 1.0f, 0.0f, 0.0f, 1.0f };
 	particle.ColorEnd = { 1.0f, 1.0f, 0.0f, 1.0f };
 
-	particle.Velocity = { 1.0f, 0.3f, 1.0f };
+	particle.Velocity = { 1.0f, 1.5f, 1.0f };
 
-	particle.SizeEnd = 5.0f;
+	particle.SizeStart = 9.0f;
+	particle.SizeEnd = 0.01f;
 
-	volcanoEffect->SetPosition(glm::vec3(0, 5.0f, -50.0f));
 	volcanoEffect->SetParticleSettings(particle);
 
 
