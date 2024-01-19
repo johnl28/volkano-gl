@@ -61,7 +61,7 @@ namespace glcore {
 		}
 
 		m_linked = true;
-		GLCORE_INFO("[Shader Program] Program %d linked", m_programId);
+		GLCORE_DEBUG("[Shader Program] Program %d linked", m_programId);
 	}
 
 	void ShaderProgram::Bind() const

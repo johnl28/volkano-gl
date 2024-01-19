@@ -67,7 +67,7 @@ namespace glcore {
 			return;
 		}
 
-		GLCORE_INFO("[Shader] shader %s compiled", m_shaderFilePath.c_str());
+		GLCORE_DEBUG("[Shader] shader %s compiled", m_shaderFilePath.c_str());
 		m_compiled = true;
 	}
 

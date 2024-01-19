@@ -28,7 +28,7 @@ namespace glcore {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
 		stbi_image_free(textureBuffer);
 
-		GLCORE_INFO("[Texture] Texture loaded successfully %s", texturePath.c_str());
+		GLCORE_DEBUG("[Texture] Texture loaded successfully %s", texturePath.c_str());
 		m_Loaded = true;
 		UnBind();
 	}

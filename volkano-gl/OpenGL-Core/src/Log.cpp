@@ -25,7 +25,7 @@ namespace glcore
             }
             case LogType::DEBUG:
             {
-                std::cout << "\033[34m[DEBUG] ";
+                std::cout << "\033[37m[DEBUG] ";
                 break;
             }
             case LogType::WARNING:

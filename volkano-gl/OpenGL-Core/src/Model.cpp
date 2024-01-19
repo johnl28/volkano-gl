@@ -27,7 +27,7 @@ namespace glcore {
 		}
 
 
-		GLCORE_INFO("[Model] Successfull loaded %s. Meshes: %d, Textures: %d, Materials: %d, Lights: %d, Cameras: %d", 
+		GLCORE_DEBUG("[Model] Successfull loaded %s. Meshes: %d, Textures: %d, Materials: %d, Lights: %d, Cameras: %d", 
 			filePath.c_str(), aiScene->mNumMeshes, aiScene->mNumTextures, aiScene->mNumMaterials, aiScene->mNumLights, aiScene->mNumCameras);
 
 		LoadAiNode(aiScene, aiScene->mRootNode);
@@ -64,7 +64,7 @@ namespace glcore {
 			LoadAiNode(scene, node->mChildren[x]);
 		}
 
-		GLCORE_INFO("[Model] [Node] Successfull loaded Node %s.", node->mName.C_Str());
+		GLCORE_DEBUG("[Model] [Node] Successfull loaded Node %s.", node->mName.C_Str());
 	}
 
 	void Model::LoadAiMeshData(const aiMesh* aiMesh, const aiMaterial* aiMaterial)
@@ -142,7 +142,7 @@ namespace glcore {
 
 		m_Meshes.push_back(std::unique_ptr<Mesh>(myMesh));
 
-		GLCORE_INFO("[Model] [Mesh] Successfull loaded mesh %s. Faces: %d, Vertices: %d, Has Normals: %d", 
+		GLCORE_DEBUG("[Model] [Mesh] Successfull loaded mesh %s. Faces: %d, Vertices: %d, Has Normals: %d",
 		 aiMesh->mName.C_Str(),	aiMesh->mNumFaces, aiMesh->mNumVertices, aiMesh->HasNormals());
 	}
 
