@@ -14,6 +14,7 @@ namespace glcore {
 
 		shader->Bind();
 		shader->SetUniformMatrix4fv("u_View", camera->GetViewMatrix());
+		shader->SetUniformVec3("u_ViewPos", camera->GetPosition());
 		shader->SetUniformMatrix4fv("u_Projection", camera->GetProjectionMatrix());
 		shader->SetUniformVec3("u_LightPositon", light->GetPosition());
 		shader->SetUniformVec3("u_LightColor", light->GetColor());
