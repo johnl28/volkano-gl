@@ -12,6 +12,8 @@ Please keep in mind, that the choice to not use CMake/Premake or any other build
 
 
 ## Example
+In the picture below it is represented how you can use the ``OpenGL-Core`` static library to create an OpenGL app and load a 3D model in the scene.
+
 ```cpp
 #include "GLCore.h"
 
