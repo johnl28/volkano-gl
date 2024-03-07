@@ -4,13 +4,11 @@
 
 
 
-
-Volkano-gl is an interactive 3D simulation scene of a volcano eruption created with C++ and OpenGL from scratch as a University Project.
+Volkano-gl is an interactive 3D simulation scene of a volcano eruption created from scratch using C++ and OpenGL as a University Project.
 
 The purpose of this project is to demonstrate a basic understanding of modern OpenGL and the computer graphics pipeline.
 
-Please keep in mind, that the choice to not use CMake/Premake or any other build system generator was for simplicity reasons and coursework requirements. 
-
+Please keep in mind that the decision not to use CMake, Premake, or any other build system generator was made for simplicity reasons and coursework requirements.
 
 ## Example
 In the example below you can see how to use the ``OpenGL-Core`` static library to create an OpenGL app and load a 3D model in the scene.
